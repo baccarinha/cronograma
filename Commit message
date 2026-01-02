@@ -1,1 +1,45 @@
 
+# 📑 Modelo de Mensagem de Commit
+
+Este modelo segue o padrão **Conventional Commits**, garantindo que o histórico do seu projeto de Gerenciamento de Escala seja legível para humanos e ferramentas automatizadas.
+
+## 🏗️ Estrutura do Modelo
+
+```text
+<tipo>(<escopo>): <descrição curta no imperativo>
+
+[corpo opcional: descrição mais detalhada do que foi feito e por quê]
+
+[rodapé opcional: notas sobre mudanças que quebram compatibilidade ou referências a issues]
+```
+
+## 🏷️ Tipos e Escopos Recomendados para este Projeto
+
+Para manter a consistência, utilize os seguintes tipos e escopos:
+
+| Tipo | Quando usar | Escopos Sugeridos |
+| :--- | :--- | :--- |
+| **feat** | Nova funcionalidade | `ui`, `pdf`, `storage`, `employees`, `sectors` |
+| **fix** | Correção de bug | `calendar`, `export`, `validation`, `layout` |
+| **docs** | Mudança em documentação | `readme`, `comments`, `guide` |
+| **style** | Formatação/Visual (sem mudar lógica) | `css`, `theme`, `icons` |
+| **refactor** | Melhoria de código existente | `logic`, `cleanup`, `performance` |
+
+## 💡 Exemplos Práticos para o seu Projeto
+
+Aqui estão alguns exemplos prontos para você copiar e adaptar:
+
+### Adicionando uma nova funcionalidade
+> `feat(pdf): adiciona opção de incluir logo da empresa no relatório`
+
+### Corrigindo um problema visual
+> `fix(ui): ajusta contraste dos botões no modo noturno`
+
+### Melhorando o código interno
+> `refactor(storage): otimiza o salvamento de dados no localStorage`
+
+### Atualizando a documentação
+> `docs(readme): atualiza seção de instalação com novos passos`
+
+---
+*Modelo preparado por **Manus AI**.*
