@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -330,46 +331,43 @@
             padding: 20px;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
-            border-left: 4px solid var(--primary-color);
+            border-top: 4px solid var(--primary-color);
         }
 
         .employee-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .employee-name {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .employee-details {
-            color: #6c757d;
-            font-size: 14px;
-            line-height: 1.6;
+            margin-bottom: 15px;
         }
 
         .employee-detail {
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #6c757d;
+            font-size: 13px;
             margin-bottom: 5px;
         }
 
         .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            margin-top: 10px;
         }
 
         .status-working {
@@ -384,22 +382,16 @@
 
         .sector-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
 
         .sector-card {
             background: white;
             border-radius: var(--border-radius);
-            padding: 25px;
+            padding: 20px;
             box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            border-top: 4px solid;
-        }
-
-        .sector-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-top: 4px solid var(--primary-color);
         }
 
         .sector-header {
@@ -410,39 +402,31 @@
         }
 
         .sector-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
             color: white;
+            font-size: 20px;
         }
 
         .sector-info h3 {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 5px;
-        }
-
-        .sector-description {
-            color: #6c757d;
-            font-size: 14px;
-            margin-bottom: 10px;
         }
 
         .sector-count {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-color);
+            font-size: 13px;
+            color: #6c757d;
         }
 
         .schedule-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
         .schedule-card {
@@ -450,54 +434,38 @@
             border-radius: var(--border-radius);
             padding: 25px;
             box-shadow: var(--box-shadow);
+            border-left: 5px solid var(--success-color);
             transition: var(--transition);
-            border-left: 4px solid var(--secondary-color);
         }
 
         .schedule-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateX(5px);
         }
 
         .schedule-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
             margin-bottom: 15px;
         }
 
         .schedule-title {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 5px;
         }
 
         .schedule-date {
-            color: #6c757d;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .schedule-meta {
             color: #6c757d;
-            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
 
         .schedule-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 12px;
+            margin-top: 20px;
         }
 
         .modal {
@@ -669,7 +637,7 @@
 
         .calendar-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* Alterado de 7 para 6 colunas (removendo domingo) */
+            grid-template-columns: repeat(7, 1fr); 
             gap: 1px;
             background: #e9ecef;
             border-radius: var(--border-radius);
@@ -864,109 +832,69 @@
         }
 
         .pdf-logo {
-            background: white;
-            color: var(--primary-color);
-            padding: 10px 20px;
-            border-radius: 8px;
-            display: inline-block;
+            font-size: 20px;
             font-weight: 800;
-            font-size: 16px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            position: relative;
-            z-index: 1;
-        }
-
-        .pdf-logo i {
-            margin-right: 8px;
-            font-size: 18px;
+            margin-bottom: 10px;
         }
 
         .pdf-title {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 8px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
+            margin-bottom: 5px;
         }
 
         .pdf-subtitle {
             font-size: 14px;
             opacity: 0.9;
-            position: relative;
-            z-index: 1;
         }
 
         .pdf-section {
-            background: var(--light-color);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--secondary-color);
+            margin-bottom: 30px;
         }
 
         .pdf-section-title {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--dark-color);
             margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .pdf-section-title i {
-            color: var(--secondary-color);
-            font-size: 20px;
-        }
-
         .pdf-employee-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
         }
 
         .pdf-employee-item {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-left: 3px solid var(--success-color);
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #dee2e6;
         }
 
         .pdf-employee-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 5px;
         }
 
         .pdf-employee-details {
+            font-size: 12px;
             color: #6c757d;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .pdf-employee-detail {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 4px;
         }
 
         .pdf-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
+            display: inline-block;
             margin-top: 8px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
         }
 
         .pdf-status-working {
@@ -977,17 +905,6 @@
         .pdf-status-off {
             background: rgba(220, 53, 69, 0.1);
             color: var(--danger-color);
-        }
-
-        /* Elemento oculto para captura de imagem */
-        .pdf-capture-element {
-            position: absolute;
-            left: -9999px;
-            top: -9999px;
-            width: 800px;
-            background: white;
-            padding: 40px;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
     </style>
 </head>
@@ -1244,137 +1161,102 @@
     <div id="viewScheduleModal" class="modal">
         <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
-                <h2 class="modal-title" id="viewScheduleTitle"></h2>
+                <h2 class="modal-title" id="viewScheduleTitle">Visualizar Cronograma</h2>
                 <button class="close-btn" onclick="closeModal('viewScheduleModal')">&times;</button>
             </div>
             <div id="scheduleDetails">
                 <!-- Detalhes do cronograma serão carregados aqui -->
             </div>
-            
-            <!-- Preview do PDF -->
-            <div id="pdfPreviewContainer" class="pdf-preview-container">
-                <!-- Conteúdo do PDF será gerado aqui -->
-            </div>
-            
             <div class="modal-actions">
-                <button type="button" class="btn btn-warning" onclick="togglePDFPreview()">
-                    <i class="fas fa-eye"></i>
-                    <span id="togglePDFText">Visualizar PDF</span>
+                <button type="button" class="btn btn-info" onclick="togglePDFPreview()">
+                    <i class="fas fa-file-pdf"></i>
+                    <span id="pdfToggleText">Visualizar PDF</span>
                 </button>
-                <button type="button" class="btn btn-info" onclick="downloadSchedulePDF()">
+                <button type="button" class="btn btn-success" onclick="downloadSchedulePDF()">
                     <i class="fas fa-download"></i>
                     Baixar PDF
                 </button>
                 <button type="button" class="btn btn-secondary" onclick="closeModal('viewScheduleModal')">Fechar</button>
             </div>
+            
+            <!-- Preview do PDF (escondido por padrão) -->
+            <div id="pdfPreviewContainer" class="pdf-preview-container">
+                <!-- Conteúdo do preview será gerado aqui -->
+            </div>
+            
+            <!-- Elemento escondido para captura do html2canvas -->
+            <div id="pdfCaptureElement" style="position: absolute; left: -9999px; width: 800px; background: white; padding: 40px;">
+                <!-- Conteúdo para captura será gerado aqui -->
+            </div>
         </div>
     </div>
 
-    <!-- Elemento oculto para captura de PDF -->
-    <div id="pdfCaptureElement" class="pdf-capture-element">
-        <!-- Conteúdo será inserido aqui para captura -->
-    </div>
-
     <script>
-        // Variáveis globais
+        // Estado da aplicação
         let employees = [];
         let schedules = [];
         let currentDate = new Date();
-        let selectedDate = null; // Será definida apenas quando o usuário selecionar uma data
+        let selectedDate = null;
         let pdfPreviewVisible = false;
 
-        // Configuração de setores
         const sectors = [
-            { name: 'Caixa', description: 'Operadores de caixa', color: '#007bff', icon: 'fas fa-cash-register' },
-            { name: 'SAC', description: 'Serviço de Atendimento ao Cliente', color: '#28a745', icon: 'fas fa-headset' },
-            { name: 'Auto Atendimento', description: 'Auto Atendimento', color: '#ffc107', icon: 'fas fa-tools' },
-            { name: 'Carrinhos', description: 'Organização de carrinhos', color: '#17a2b8', icon: 'fas fa-shopping-cart' },
-            { name: 'Assistentes', description: 'Assistentes gerais', color: '#6f42c1', icon: 'fas fa-hands-helping' },
-            { name: 'Fiscal', description: 'Fiscalização e segurança', color: '#dc3545', icon: 'fas fa-shield-alt' }
+            { name: 'Caixa', color: '#FF0000', icon: 'fas fa-cash-register', description: 'Operação de frente de caixa' },
+            { name: 'SAC', color: '#007bff', icon: 'fas fa-headset', description: 'Serviço de atendimento ao cliente' },
+            { name: 'Auto Atendimento', color: '#28a745', icon: 'fas fa-tools', description: 'Caixas de autoatendimento' },
+            { name: 'Carrinhos', color: '#ffc107', icon: 'fas fa-shopping-cart', description: 'Organização de carrinhos' },
+            { name: 'Assistentes', color: '#17a2b8', icon: 'fas fa-hands-helping', description: 'Apoio aos clientes e operadores de caixas' },
+            { name: 'Fiscal', color: '#343a40', icon: 'fas fa-user-shield', description: 'Prevenção e fiscalização' }
         ];
 
-        // Cores avançadas para PDF
-        const advancedColors = {
-            primary: [255, 0, 0],
-            secondary: [0, 123, 255],
-            success: [40, 167, 69],
-            danger: [220, 53, 69],
-            warning: [255, 193, 7],
-            info: [23, 162, 184],
-            light: [248, 249, 250],
-            dark: [52, 58, 64],
-            white: [255, 255, 255],
-            purple: [111, 66, 193],
-            orange: [253, 126, 20],
-            teal: [32, 201, 151],
-            pink: [232, 62, 140],
-            indigo: [102, 16, 242],
-            cyan: [13, 202, 240]
-        };
-
         // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
+        window.onload = function() {
             loadData();
             updateStats();
             renderEmployees();
+            renderDashboardEmployees();
             renderSchedules();
             renderSectors();
             generateCalendar();
-        });
+        };
 
         // Funções de navegação
-        function showTab(tabName) {
-            // Ocultar todas as abas
+        function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Remover classe active de todos os botões
             document.querySelectorAll('.nav-tab').forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            // Mostrar aba selecionada
-            document.getElementById(tabName).classList.add('active');
-            
-            // Adicionar classe active ao botão correspondente
-            event.target.classList.add('active');
-            
-            // Atualizar conteúdo específico da aba
-            if (tabName === 'employees') {
-                renderEmployees();
-            } else if (tabName === 'schedules') {
-                renderSchedules();
-            } else if (tabName === 'sectors') {
-                renderSectors();
-            } else if (tabName === 'dashboard') {
-                renderDashboardEmployees();
-            }
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
         // Funções de modal
         function showModal(modalId) {
             document.getElementById(modalId).classList.add('show');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-            
-            // Limpar formulários
-            if (modalId === 'addEmployeeModal') {
-                document.getElementById('addEmployeeForm').reset();
-            } else if (modalId === 'createScheduleModal') {
-                document.getElementById('createScheduleForm').reset();
-                selectedDate = null;
+            if (modalId === 'createScheduleModal') {
                 generateCalendar();
             }
         }
 
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            if (modalId === 'viewScheduleModal') {
+                document.getElementById('pdfPreviewContainer').classList.remove('show');
+                document.getElementById('pdfToggleText').textContent = 'Visualizar PDF';
+                pdfPreviewVisible = false;
+            }
+        }
+
         function showAddEmployeeModal() {
+            document.getElementById('addEmployeeForm').reset();
             showModal('addEmployeeModal');
         }
 
         function showCreateScheduleModal() {
+            document.getElementById('createScheduleForm').reset();
+            selectedDate = null;
             showModal('createScheduleModal');
         }
 
@@ -1388,7 +1270,7 @@
             const offDay = document.getElementById('employeeOffDay').value;
             
             if (!name || !sector || !schedule || !offDay) {
-                showNotification('Preencha todos os campos obrigatórios.', 'error');
+                showNotification('Por favor, preencha todos os campos.', 'error');
                 return;
             }
             
@@ -1433,6 +1315,7 @@
         }
 
         function renderEmployeeList(container) {
+            if (!container) return;
             if (employees.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -1478,6 +1361,7 @@
         // Funções de setores
         function renderSectors() {
             const container = document.getElementById('sectorsList');
+            if (!container) return;
             
             container.innerHTML = sectors.map(sector => {
                 const employeeCount = employees.filter(emp => emp.sector === sector.name).length;
@@ -1521,25 +1405,8 @@
                 return;
             }
             
-            // Verificar se a data selecionada é domingo
-            if (selectedDate.getDay() === 0) {
-                showNotification('Não é possível criar cronograma para domingo.', 'error');
-                return;
-            }
-            
-            // Debug temporário
-            console.log('selectedDate antes da criação:', selectedDate);
-            console.log('selectedDate.getFullYear():', selectedDate.getFullYear());
-            console.log('selectedDate.getMonth():', selectedDate.getMonth());
-            console.log('selectedDate.getDate():', selectedDate.getDate());
-            
             // Usar exatamente a data selecionada pelo usuário, garantindo que seja apenas a data (sem horário)
             const scheduleDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0, 0);
-            
-            console.log('scheduleDate criada:', scheduleDate);
-            console.log('scheduleDate formatada:', scheduleDate.toLocaleDateString('pt-BR'));
-            
-
             
             const schedule = {
                 id: Date.now(),
@@ -1657,7 +1524,7 @@
                     scheduleGroups[employee.schedule].push(employee);
                 });
                 
-                const schedules = Object.keys(scheduleGroups).map(schedule => ({
+                const schedulesArr = Object.keys(scheduleGroups).map(schedule => ({
                     schedule,
                     employees: scheduleGroups[schedule]
                 }));
@@ -1665,7 +1532,7 @@
                 organized.push({
                     name: sector.name,
                     employees: sectorEmployees,
-                    schedules
+                    schedules: schedulesArr
                 });
             });
             
@@ -1674,6 +1541,7 @@
 
         function renderSchedules() {
             const container = document.getElementById('schedulesList');
+            if (!container) return;
             
             if (schedules.length === 0) {
                 container.innerHTML = `
@@ -1731,22 +1599,25 @@
             }).join('');
         }
 
-        // Funções de calendário (MODIFICADAS PARA REMOVER DOMINGOS)
+        // Funções de calendário
         function generateCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
             
-            document.getElementById('calendarTitle').textContent = 
-                new Date(year, month).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            const calendarTitle = document.getElementById('calendarTitle');
+            if (calendarTitle) {
+                calendarTitle.textContent = 
+                    new Date(year, month).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            }
             
             const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
             
             const calendarGrid = document.getElementById('calendarGrid');
+            if (!calendarGrid) return;
             calendarGrid.innerHTML = '';
             
-            // Cabeçalhos dos dias (SEM DOMINGO)
-            const dayHeaders = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            // Cabeçalhos dos dias (INCLUINDO DOMINGO)
+            const dayHeaders = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             dayHeaders.forEach(day => {
                 const dayHeader = document.createElement('div');
                 dayHeader.className = 'calendar-day-header';
@@ -1754,21 +1625,14 @@
                 calendarGrid.appendChild(dayHeader);
             });
             
-            // Calcular o primeiro dia da semana (segunda-feira = 1)
+            // Calcular o primeiro dia da semana (domingo = 0)
             let startDate = new Date(firstDay);
             const firstDayOfWeek = firstDay.getDay();
-            const daysToSubtract = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-            startDate.setDate(startDate.getDate() - daysToSubtract);
+            startDate.setDate(startDate.getDate() - firstDayOfWeek);
             
-            // Gerar dias do calendário (6 semanas x 6 dias = 36 células)
+            // Gerar dias do calendário (6 semanas x 7 dias = 42 células)
             const currentDateObj = new Date(startDate);
-            for (let i = 0; i < 36; i++) {
-                // Pular domingos
-                if (currentDateObj.getDay() === 0) {
-                    currentDateObj.setDate(currentDateObj.getDate() + 1);
-                    continue;
-                }
-                
+            for (let i = 0; i < 42; i++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = currentDateObj.getDate();
@@ -1785,8 +1649,9 @@
                     dayElement.classList.add('selected');
                 }
                 
+                // Capturar a data atual do loop para o evento de clique
+                const clickedDate = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), currentDateObj.getDate());
                 dayElement.addEventListener('click', () => {
-                    const clickedDate = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), currentDateObj.getDate());
                     selectDate(clickedDate);
                 });
                 
@@ -1801,12 +1666,6 @@
         }
 
         function selectDate(date) {
-            // Não permitir seleção de domingos
-            if (date.getDay() === 0) {
-                showNotification('Não é possível selecionar domingos.', 'error');
-                return;
-            }
-            
             // Garantir que a data seja armazenada sem informações de horário
             selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
             generateCalendar();
@@ -1843,14 +1702,14 @@
         // Fechar modais ao clicar fora
         document.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('show');
+                closeModal(event.target.id);
             }
         });
 
         // FUNÇÃO APRIMORADA: Toggle do preview do PDF
         function togglePDFPreview() {
             const container = document.getElementById('pdfPreviewContainer');
-            const toggleText = document.getElementById('togglePDFText');
+            const toggleText = document.getElementById('pdfToggleText');
             
             if (!pdfPreviewVisible) {
                 generatePDFPreview();
@@ -1875,12 +1734,10 @@
             let displayDate, displayDay;
             
             if (schedule.date) {
-                // Se a data está armazenada como string ISO, converter para Date
                 const scheduleDate = typeof schedule.date === 'string' ? new Date(schedule.date) : schedule.date;
                 displayDate = scheduleDate.toLocaleDateString('pt-BR');
                 displayDay = scheduleDate.toLocaleDateString('pt-BR', { weekday: 'long' });
             } else {
-                // Fallback para dados antigos
                 displayDate = schedule.dateText || 'Data não disponível';
                 displayDay = schedule.dayText || 'Dia não disponível';
             }
@@ -1968,21 +1825,16 @@
                 const captureElement = document.getElementById('pdfCaptureElement');
                 const organizedEmployees = organizeScheduleEmployees(schedule.employees);
                 
-                // Garantir que a data seja processada corretamente
                 let displayDate, displayDay;
-                
                 if (schedule.date) {
-                    // Se a data está armazenada como string ISO, converter para Date
                     const scheduleDate = typeof schedule.date === 'string' ? new Date(schedule.date) : schedule.date;
                     displayDate = scheduleDate.toLocaleDateString('pt-BR');
                     displayDay = scheduleDate.toLocaleDateString('pt-BR', { weekday: 'long' });
                 } else {
-                    // Fallback para dados antigos
                     displayDate = schedule.dateText || 'Data não disponível';
                     displayDay = schedule.dayText || 'Dia não disponível';
                 }
                 
-                // Gerar conteúdo para captura
                 captureElement.innerHTML = `
                     <div style="font-family: 'Inter', Arial, sans-serif; color: #333; line-height: 1.6;">
                         <div style="background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%); color: white; padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 30px;">
@@ -2004,12 +1856,7 @@
                         
                         ${organizedEmployees.map(sector => `
                             <div style="background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid ${getSectorColor(sector.name)};">
-                                <h3 style="font-size: 18px; font-weight: 600; color: #495057; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                                    ${getSectorIcon(sector.name).includes('cash-register') ? '💰' : 
-                                      getSectorIcon(sector.name).includes('headset') ? '🎧' : 
-                                      getSectorIcon(sector.name).includes('tools') ? '🔧' : 
-                                      getSectorIcon(sector.name).includes('shopping-cart') ? '🛒' : 
-                                      getSectorIcon(sector.name).includes('hands-helping') ? '🤝' : '🛡️'}
+                                <h3 style="font-size: 18px; font-weight: 600; color: #495057; margin-bottom: 20px;">
                                     ${sector.name} (${sector.employees.length} funcionários)
                                 </h3>
                                 ${sector.schedules.map(scheduleGroup => `
@@ -2047,7 +1894,6 @@
                     </div>
                 `;
                 
-                // Aguardar renderização e capturar
                 setTimeout(() => {
                     html2canvas(captureElement, { 
                         scale: 2,
@@ -2059,17 +1905,15 @@
                         const doc = new jsPDF('p', 'mm', 'a4');
                         
                         const imgData = canvas.toDataURL('image/png');
-                        const imgWidth = 210; // A4 width in mm
-                        const pageHeight = 295; // A4 height in mm
+                        const imgWidth = 210;
+                        const pageHeight = 295;
                         const imgHeight = (canvas.height * imgWidth) / canvas.width;
                         let heightLeft = imgHeight;
                         let position = 0;
                         
-                        // Adicionar primeira página
                         doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
                         heightLeft -= pageHeight;
                         
-                        // Adicionar páginas adicionais se necessário
                         while (heightLeft >= 0) {
                             position = heightLeft - imgHeight;
                             doc.addPage();
@@ -2077,24 +1921,18 @@
                             heightLeft -= pageHeight;
                         }
                         
-                        // Salvar o PDF
                         const fileName = `cronograma_${schedule.name.replace(/\s+/g, '_')}_${schedule.dateText.replace(/\//g, '-')}.pdf`;
                         doc.save(fileName);
-                        
-                        showNotification('PDF com imagens gerado com sucesso!', 'success');
-                        
-                        // Limpar elemento de captura
+                        showNotification('PDF gerado com sucesso!', 'success');
                         captureElement.innerHTML = '';
-                        
                     }).catch(error => {
                         console.error('Erro ao capturar imagem:', error);
-                        showNotification('Erro ao gerar PDF com imagens. Tente novamente.', 'error');
+                        showNotification('Erro ao gerar PDF.', 'error');
                     });
                 }, 500);
-                
             } catch (error) {
                 console.error('Erro ao gerar PDF:', error);
-                showNotification('Erro ao gerar PDF. Tente novamente.', 'error');
+                showNotification('Erro ao gerar PDF.', 'error');
             }
         }
 
@@ -2113,9 +1951,13 @@
         }
 
         function updateStats() {
-            document.getElementById('totalEmployees').textContent = employees.length;
-            document.getElementById('workingToday').textContent = employees.filter(emp => emp.status === 'Trabalhando').length;
-            document.getElementById('totalSchedules').textContent = schedules.length;
+            const totalEmployeesEl = document.getElementById('totalEmployees');
+            const workingTodayEl = document.getElementById('workingToday');
+            const totalSchedulesEl = document.getElementById('totalSchedules');
+            
+            if (totalEmployeesEl) totalEmployeesEl.textContent = employees.length;
+            if (workingTodayEl) workingTodayEl.textContent = employees.filter(emp => emp.status === 'Trabalhando').length;
+            if (totalSchedulesEl) totalSchedulesEl.textContent = schedules.length;
         }
 
         function filterEmployees() {
@@ -2138,63 +1980,44 @@
             const savedEmployees = localStorage.getItem('fortAtacadistaEmployees');
             const savedSchedules = localStorage.getItem('fortAtacadistaSchedules');
             
-            if (savedEmployees) {
-                employees = JSON.parse(savedEmployees);
-            }
-            
-            if (savedSchedules) {
-                schedules = JSON.parse(savedSchedules);
-            }
+            if (savedEmployees) employees = JSON.parse(savedEmployees);
+            if (savedSchedules) schedules = JSON.parse(savedSchedules);
         }
 
-        // Funções de exportação/importação
         function exportData() {
             const data = {
                 employees: employees,
                 schedules: schedules,
                 exportDate: new Date().toISOString()
             };
-            
             const dataStr = JSON.stringify(data, null, 2);
             const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            
             const link = document.createElement('a');
             link.href = URL.createObjectURL(dataBlob);
             link.download = `fort_atacadista_backup_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
-            
-            showNotification('Dados exportados com sucesso!', 'success');
+            showNotification('Dados exportados!', 'success');
         }
 
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    
-                    if (data.employees && Array.isArray(data.employees)) {
-                        employees = data.employees;
-                    }
-                    
-                    if (data.schedules && Array.isArray(data.schedules)) {
-                        schedules = data.schedules;
-                    }
-                    
+                    if (data.employees) employees = data.employees;
+                    if (data.schedules) schedules = data.schedules;
                     saveData();
                     updateStats();
                     renderEmployees();
                     renderDashboardEmployees();
                     renderSchedules();
-                    
-                    showNotification('Dados importados com sucesso!', 'success');
+                    showNotification('Dados importados!', 'success');
                 } catch (error) {
-                    showNotification('Erro ao importar dados. Verifique o arquivo.', 'error');
+                    showNotification('Erro na importação!', 'error');
                 }
             };
-            
             reader.readAsText(file);
             event.target.value = '';
         }
