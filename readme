@@ -1,55 +1,269 @@
-# 📋 Gerenciamento de Escala da Frente de Caixa - Fort Atacadista
+🏪 Gerenciamento de Escala da Frente de Caixa – Fort Atacadista
+📌 Sobre o Projeto
 
-## 🚀 Sobre o Projeto
+Sistema web completo para gestão de funcionários e criação de cronogramas de trabalho da frente de caixa do Fort Atacadista.
 
-Este projeto consiste em uma aplicação web *single-page* (SPA) desenvolvida em **HTML, CSS e JavaScript puro** para o gerenciamento eficiente da escala de trabalho dos colaboradores da Frente de Caixa da rede Fort Atacadista.
+O sistema permite:
 
-O objetivo principal é digitalizar e otimizar o processo de criação, visualização e exportação de escalas, substituindo métodos manuais por uma interface intuitiva e rica em funcionalidades. A aplicação garante a persistência dos dados localmente no navegador do usuário através do `localStorage`.
+Cadastro de funcionários
 
-## ✨ Funcionalidades Principais
+Organização por setores
 
-A aplicação oferece um conjunto robusto de ferramentas para a gestão operacional:
+Definição de horários e folgas
 
-| Categoria | Funcionalidade | Descrição |
-| :--- | :--- | :--- |
-| **Gestão de Pessoal** | Cadastro de Funcionários | Adição, edição e remoção de colaboradores com informações como nome, setor e dia de folga. |
-| **Gestão de Escalas** | Criação de Escalas | Definição de escalas de trabalho para datas específicas, com atribuição de funcionários por turno e setor. |
-| **Visualização** | Calendário Interativo | Visualização das escalas criadas em um calendário, facilitando a navegação e o planejamento. |
-| **Relatórios** | Exportação para PDF | Geração e download de relatórios de escala em formato PDF, prontos para impressão ou compartilhamento, utilizando `jsPDF` e `html2canvas`. |
-| **Configurações** | Setores Personalizáveis | Gerenciamento de setores (Caixa, Empacotador, Tesouraria, etc.) com cores e ícones distintos para melhor organização visual. |
-| **Persistência** | Armazenamento Local | Todos os dados (funcionários, setores e escalas) são salvos no navegador via `localStorage`, garantindo que as informações não sejam perdidas entre sessões. |
+Criação automática de cronogramas por data
 
-## 🛠️ Tecnologias Utilizadas
+Visualização organizada por setor e turno
 
-O projeto foi construído com foco em simplicidade, leveza e desempenho, utilizando as seguintes tecnologias:
+Exportação e importação de dados
 
-*   **Frontend:** HTML5, CSS3 (Vanilla CSS), JavaScript (Vanilla JS)
-*   **Estilização:** Font Awesome (para ícones)
-*   **Geração de PDF:** `jsPDF` e `html2canvas` (bibliotecas externas para manipulação e exportação de conteúdo HTML para PDF).
-*   **Persistência de Dados:** `localStorage` (API nativa do navegador).
+Geração e download de cronogramas em PDF
 
-## 💻 Instalação e Uso
+O projeto foi desenvolvido utilizando HTML5, CSS3 e JavaScript puro (Vanilla JS), sem necessidade de backend.
 
-Por ser uma aplicação *single-page* em HTML/CSS/JS puro, a instalação e execução são extremamente simples:
+🖥️ Interface do Sistema
+📊 Dashboard
 
-1.  **Clone o repositório** (se aplicável) ou **salve o arquivo** `pasted_content.txt` como `index.html`.
-2.  **Abra o arquivo** `index.html` diretamente em qualquer navegador web moderno (Chrome, Firefox, Edge, etc.).
+Total de funcionários
 
-Não é necessário um servidor web para a execução, pois todos os recursos são carregados localmente.
+Funcionários trabalhando no dia
 
-## 📂 Estrutura do Projeto
+Total de setores ativos
 
-O projeto é composto por um único arquivo que contém toda a estrutura (HTML), estilização (CSS) e lógica de programação (JavaScript):
+Total de cronogramas criados
 
-```
-.
-└── index.html  # Contém todo o código da aplicação (HTML, CSS e JS)
-```
+Busca rápida de funcionários
 
-## 📝 Licença
+Ações rápidas (Adicionar funcionário, Criar cronograma, Exportar/Importar dados)
 
-Este projeto está licenciado sob a Licença MIT. Veja o arquivo `LICENSE` (a ser criado) para mais detalhes.
+👥 Funcionários
 
----
+Cadastro completo com:
 
-*Desenvolvido por **Manus AI**.*
+Nome
+
+Setor
+
+Horário de trabalho
+
+Dia de folga
+
+Exclusão de funcionário
+
+Status automático (Trabalhando / Folga)
+
+Pesquisa por nome
+
+📅 Cronogramas
+
+Criação de cronograma com:
+
+Nome personalizado
+
+Seleção de data via calendário interativo
+
+Cálculo automático de folga baseado no dia da semana
+
+Organização por:
+
+Setor
+
+Horário
+
+Visualização detalhada
+
+Exclusão de cronograma
+
+🏢 Setores Ativos
+
+O sistema já vem com os seguintes setores configurados:
+
+Caixa
+
+Auto Atendimento
+
+Carrinhos
+
+Assistentes
+
+Gerente
+
+Cada setor possui:
+
+Cor personalizada
+
+Ícone
+
+Contagem automática de funcionários
+
+📄 Geração de PDF
+
+O sistema permite:
+
+Visualização prévia do PDF
+
+Download do cronograma em PDF
+
+Layout profissional
+
+Organização por setor
+
+Indicação clara de:
+
+🏠 FOLGA
+
+💼 TRABALHANDO
+
+Bibliotecas utilizadas:
+
+jsPDF
+
+html2canvas
+
+⚙️ Tecnologias Utilizadas
+
+HTML5
+
+CSS3 (Design moderno com gradientes e animações)
+
+JavaScript ES6+
+
+Font Awesome (ícones)
+
+jsPDF (geração de PDF)
+
+html2canvas (captura de elementos para PDF)
+
+LocalStorage (armazenamento local dos dados)
+
+💾 Armazenamento de Dados
+
+O sistema utiliza:
+
+localStorage
+
+Os dados armazenados incluem:
+
+Funcionários
+
+Cronogramas
+
+Datas
+
+Status
+
+Também é possível:
+
+Exportar dados em .json
+
+Importar dados salvos
+
+📱 Responsividade
+
+O sistema é totalmente responsivo:
+
+Desktop
+
+Tablet
+
+Mobile
+
+Adapta:
+
+Grid
+
+Botões
+
+Layout das abas
+
+Modais
+
+🗂️ Estrutura do Projeto
+cronograma.html
+│
+├── HTML (estrutura principal)
+├── CSS interno (estilização moderna)
+├── JavaScript interno
+│   ├── Gestão de funcionários
+│   ├── Gestão de cronogramas
+│   ├── Organização por setores
+│   ├── Calendário dinâmico
+│   ├── Geração de PDF
+│   ├── Exportação/Importação
+│   └── Notificações
+🚀 Como Executar
+
+Baixe o arquivo cronograma.html
+
+Abra no navegador (Google Chrome recomendado)
+
+Pronto! O sistema funciona offline.
+
+Não é necessário:
+
+Servidor
+
+Banco de dados
+
+Instalação de dependências
+
+🧠 Lógica de Funcionamento
+📅 Cálculo de Folga
+
+Ao criar um cronograma:
+
+O sistema verifica o dia da semana
+
+Compara com o dia de folga cadastrado do funcionário
+
+Define automaticamente:
+
+FOLGA
+
+Trabalhando
+
+📊 Organização do Cronograma
+
+A visualização organiza os funcionários por:
+
+Setor
+
+Horário
+
+Status
+
+Isso facilita a leitura da escala.
+
+🔐 Segurança
+
+Dados armazenados apenas no navegador
+
+Nenhuma informação é enviada para servidores externos
+
+Ideal para uso interno
+
+📌 Funcionalidades Futuras (Melhorias Sugeridas)
+
+✔ Edição de funcionário
+
+✔ Edição de cronograma
+
+✔ Relatórios estatísticos
+
+✔ Controle de presença
+
+✔ Banco de dados (Firebase ou backend)
+
+✔ Controle de permissões (login administrador)
+
+✔ Filtros por setor
+
+✔ Impressão direta
+
+✔ Tema escuro
+
+👨‍💻 Autor
+
+Projeto desenvolvido para gestão da Frente de Caixa – Fort Atacadista.
+
+Sistema moderno, organizado e preparado para expansão futura.
