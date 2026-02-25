@@ -1,3 +1,86 @@
+
+
+Atualizar
+
+Compartilhar
+Atualizei o formulário para incluir o ciclo de domingo (A/B/C) e ajustei a lógica que calcula os domingos pares e ímpares de 2026, considerando o ciclo escolhido pelo funcionário.
+
+Lite
+Atualizei o arquivo cronograma.html com a funcionalidade de escala de domingo (Ciclos A e B) para o ano de 2026.
+O que foi implementado:
+Novos Campos no Cadastro: Ao adicionar ou editar um funcionário, agora você pode selecionar o Ciclo de Folga de Domingo (A, B ou C).
+Lógica Inteligente de 2026: O sistema calcula automaticamente o número do domingo no ano de 2026.
+Domingo A: Folga nos domingos ímpares (1º, 3º, 5º... do ano).
+Domingo B: Folga nos domingos pares (2º, 4º, 6º... do ano).
+Domingo C: Trabalha todos os domingos (folga apenas no dia da semana).
+Reconhecimento Automático: Ao criar um cronograma para um domingo de 2026, o sistema identifica o ciclo do funcionário e já marca "FOLGA" ou "Trabalhando" automaticamente, sem que você precise ajustar manualmente.
+Visualização: O card do funcionário agora exibe qual é o seu ciclo de domingo para facilitar a conferência.
+Basta baixar o arquivo em anexo e substituir a versão anterior. O sistema já está pronto para gerenciar as escalas a partir de janeiro de 2026!
+cronograma.html
+Código · 80.23 KB
+Ver todos os arquivos nesta tarefa
+Como foi este resultado?
+não é este o ciclo de domingo que eu quero, eu quero que o domingo A contado a partir do dia 04/01/2026 e o domingo B seja o seguinte 11/01/2026 e depois na proxima semana volte para o A 18/01/2026 e assim por diante 
+Lite
+Entendi perfeitamente o ajuste! Você quer um sistema de alternância semanal exata: o domingo 04/01/2026 é o marco do Ciclo A, o domingo 11/01/2026 é o Ciclo B, e assim por diante, alternando semana a semana.
+Vou corrigir a lógica de cálculo no seu arquivo cronograma.html para que o sistema siga exatamente esse padrão de alternância (A, B, A, B...) a partir da data de referência que você forneceu. Por favor, aguarde um momento.
+Gerenciamento de folgas de domingo por ciclo de semana (A, B, C)
+
+
+Estou ajustando a lógica de alternância de domingos no sistema para seguir uma sequência exata de ciclos A e B, começando em 04/01/2026.
+
+Ajustei a lógica de alternância de domingos para iniciar em 04/01/2026, usando diferença de semanas para determinar os ciclos A ou B, garantindo sequência exata.
+
+Lite
+Ajustei a lógica conforme sua solicitação! Agora o sistema segue o padrão exato de alternância semanal:
+Como funciona agora:
+Marco Inicial: O sistema usa o dia 04/01/2026 como a referência para o Ciclo A.
+Alternância Semanal:
+Ciclo A: Domingos 04/01, 18/01, 01/02... (semanas pares de diferença da data base).
+Ciclo B: Domingos 11/01, 25/01, 08/02... (semanas ímpares de diferença da data base).
+Funcionamento Automático: Ao criar um cronograma para um domingo, o sistema calcula quantas semanas se passaram desde o dia 04/01/2026. Se a diferença for de 0, 2, 4 semanas, ele reconhece como Ciclo A. Se for 1, 3, 5 semanas, reconhece como Ciclo B.
+O arquivo atualizado com essa regra de alternância está em anexo. Basta substituir a versão anterior e o sistema já estará sincronizado com esse calendário!
+cronograma.html
+Código · 80.38 KB
+Ver todos os arquivos nesta tarefa
+Como foi este resultado?
+os domingos sempre coincidem de ser impar e par um e seguida do outro no mes 
+Lite
+Compreendo perfeitamente a sua observação. Como os domingos ocorrem de 7 em 7 dias, eles sempre alternam entre datas ímpares e pares (ex: 4 é par, 11 é ímpar, 18 é par, 25 é ímpar).
+Minha lógica anterior já utilizava essa alternância semanal exata baseada na data de referência (04/01/2026), o que naturalmente segue esse padrão que você mencionou. Vou apenas revisar o código para garantir que as descrições nos menus e as notificações deixem isso bem claro para o usuário, facilitando a conferência visual no calendário.
+Por favor, aguarde um momento enquanto finalizo essa revisão.
+Gerenciamento de folgas de domingo por ciclo de semana (A, B)
+
+O sistema deve considerar ciclos de semana 'A' e 'B' para determinar se os funcionários trabalharão ou terão folga no domingo. O 'Domingo A' deve iniciar em 04/01/2026, seguido pelo 'Domingo B' em 11/01/2026, e então alternar entre 'A' e 'B' nas semanas subsequentes. A folga de domingo é independente do cronograma de trabalho durante a semana.
+
+Dispensar
+Aceitar
+Confirmado: a lógica de alternância semanal usa 04/01/2026 como base, alternando ciclos A e B a cada semana par ou ímpar. Vou ajustar as descrições para facilitar compreensão.
+
+A lógica de alternância semanal usa a data de referência 04/01/2026 para determinar ciclos A ou B, ajustando a folga dos funcionários conforme o ciclo correspondente. Próximo passo: revisar e aprimorar a implementação.
+
+Reforcei as descrições do ciclo de domingos no formulário, relacionando-as às datas de folga previstas para 2026, para facilitar a compreensão ao usuário.
+
+Lite
+Exatamente! Como os domingos ocorrem a cada 7 dias, eles sempre alternam entre datas ímpares e pares (ex: 4 é par, 11 é ímpar, 18 é par, 25 é ímpar).
+Aproveitei essa sua observação para tornar o sistema ainda mais claro e fácil de usar.
+O que foi aprimorado:
+Descrições Claras: No menu de cadastro, agora as opções mostram as datas reais para facilitar sua conferência:
+Domingo A: Mostra que as folgas são em 04/01, 18/01, 01/02...
+Domingo B: Mostra que as folgas são em 11/01, 25/01, 08/02...
+Lógica de Alternância: O código interno foi validado para garantir que, independente de ser ímpar ou par, ele siga a contagem exata de semanas a partir de 04/01/2026, mantendo a escala sempre sincronizada.
+Facilidade para o Usuário: Agora você não precisa fazer cálculos de cabeça; basta olhar para a data no calendário e o sistema já saberá se é o domingo de folga do Ciclo A ou do Ciclo B.
+O arquivo final com essas melhorias de interface está em anexo. Estou à disposição caso precise de mais algum ajuste!
+cronograma.html
+Código · 80.37 KB
+Ver todos os arquivos nesta tarefa
+Tarefa concluída
+Como foi este resultado?
+Sugestões de acompanhamento
+
+
+
+cronograma.html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -937,7 +1020,10 @@
                 <i class="fas fa-building"></i>
                 Setores
             </button>
-
+            <button class="nav-tab" onclick="showTab('reports')">
+                <i class="fas fa-chart-bar"></i>
+                Relatórios
+            </button>
         </div>
 
         <!-- Conteúdo das Abas -->
@@ -1057,7 +1143,17 @@
             </div>
         </div>
 
-       <!-- Modal Adicionar Funcionário -->
+        <!-- Relatórios -->
+        <div id="reports" class="tab-content">
+            <div class="reports-placeholder">
+                <i class="fas fa-chart-line"></i>
+                <h3>Relatórios</h3>
+                <p>Funcionalidade em desenvolvimento...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Funcionário -->
     <div id="addEmployeeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1102,6 +1198,15 @@
                         <option value="sexta">Sexta-feira</option>
                         <option value="sabado">Sábado</option>
                         <option value="nenhum">Nenhum dia da semana</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ciclo de Folga de Domingo (2026)</label>
+                    <select class="form-select" id="employeeSundayCycle">
+                        <option value="">Selecione o ciclo</option>
+                        <option value="A">Domingo A (Folga: 04/01, 18/01, 01/02...)</option>
+                        <option value="B">Domingo B (Folga: 11/01, 25/01, 08/02...)</option>
+                        <option value="C">Domingo C (Trabalha todos os domingos)</option>
                     </select>
                 </div>
                 <div class="modal-actions">
@@ -1252,6 +1357,7 @@
             const sector = document.getElementById('employeeSector').value;
             const schedule = document.getElementById('employeeSchedule').value;
             const offDay = document.getElementById('employeeOffDay').value;
+            const sundayCycle = document.getElementById('employeeSundayCycle').value;
             
             if (!name || !sector || !schedule || !offDay) {
                 showNotification('Por favor, preencha todos os campos.', 'error');
@@ -1264,6 +1370,7 @@
                 sector,
                 schedule,
                 offDay,
+                sundayCycle: sundayCycle || 'C',
                 status: 'Trabalhando',
                 createdAt: new Date().toISOString()
             };
@@ -1332,6 +1439,10 @@
                         <div class="employee-detail">
                             <i class="fas fa-calendar-times"></i>
                             Folga: ${getOffDayName(employee.offDay)}
+                        </div>
+                        <div class="employee-detail">
+                            <i class="fas fa-sun"></i>
+                            Ciclo Domingo: ${employee.sundayCycle || 'C'}
                         </div>
                     </div>
                     <div class="status-badge ${employee.status === 'Trabalhando' ? 'status-working' : 'status-off'}">
@@ -1410,7 +1521,27 @@
                         6: 'sabado'
                     };
                     
-                    const isOffDay = emp.offDay === dayNames[dayOfWeek];
+                    let isOffDay = emp.offDay === dayNames[dayOfWeek];
+                    
+                    // Lógica especial para domingos em 2026
+                    if (dayOfWeek === 0) {
+                        // Calcular a diferença de semanas a partir de 04/01/2026 (Referência Ciclo A)
+                        const referenceDate = new Date(2026, 0, 4); // 04 de Janeiro de 2026
+                        const diffTime = scheduleDate.getTime() - referenceDate.getTime();
+                        const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+                        
+                        // Se a diferença de semanas for par (0, 2, 4...), é Ciclo A
+                        // Se a diferença de semanas for ímpar (1, 3, 5...), é Ciclo B
+                        const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
+                        
+                        if (emp.sundayCycle === 'A') {
+                            isOffDay = isCycleASunday; // Folga se for domingo de Ciclo A
+                        } else if (emp.sundayCycle === 'B') {
+                            isOffDay = !isCycleASunday; // Folga se for domingo de Ciclo B
+                        } else {
+                            isOffDay = false; // Ciclo C trabalha sempre
+                        }
+                    }
                     
                     return {
                         ...emp,
@@ -2026,3 +2157,7 @@
     </script>
 </body>
 </html>
+Sugestões de melhoria para este site? - Manus
+Anotação
+Destacar
+Explicar
