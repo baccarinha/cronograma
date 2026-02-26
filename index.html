@@ -948,7 +948,7 @@
         <!-- Dashboard -->
         <div id="dashboard" class="tab-content active">
             <div class="stats-grid">
-                <div class="stat-card primary">
+                <div class="stat-card primary" onclick="showTab('employees')" style="cursor: pointer;">
                     <div class="stat-icon">
                         <i class="fas fa-users"></i>
                     </div>
@@ -962,14 +962,14 @@
                     <div class="stat-number" id="workingToday">0</div>
                     <div class="stat-label">Trabalhando Hoje</div>
                 </div>
-                <div class="stat-card info">
+                <div class="stat-card info" onclick="showTab('sectors')" style="cursor: pointer;">
                     <div class="stat-icon">
                         <i class="fas fa-building"></i>
                     </div>
                     <div class="stat-number">5</div>
                     <div class="stat-label">Setores Ativos</div>
                 </div>
-                <div class="stat-card secondary">
+                <div class="stat-card secondary" onclick="showTab('schedules')" style="cursor: pointer;">
                     <div class="stat-icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
@@ -1251,7 +1251,17 @@
             });
             
             document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            
+            // Se houver um evento (clique direto na aba), ativa o botão
+            if (event && event.currentTarget && event.currentTarget.classList.contains('nav-tab')) {
+                event.currentTarget.classList.add('active');
+            } else {
+                // Se for chamado via código, procura o botão correspondente
+                const targetBtn = Array.from(document.querySelectorAll('.nav-tab')).find(btn => 
+                    btn.getAttribute('onclick').includes(`'${tabId}'`)
+                );
+                if (targetBtn) targetBtn.classList.add('active');
+            }
         }
 
         // Funções de modal
