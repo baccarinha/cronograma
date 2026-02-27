@@ -1,3 +1,72 @@
+
+
+Atualizar
+
+Compartilhar
+Para avançar, vou inserir o botão de ação no arquivo cronograma.html, garantindo que seja clicável e preparado para exibir a lista de funcionários trabalhando hoje.
+
+Lite
+Implementei a funcionalidade interativa no dashboard que você solicitou!
+O que mudou:
+Botão Interativo: O card verde que mostra a quantidade de pessoas "Trabalhando Hoje" agora é um botão clicável.
+Consulta em Tempo Real: Ao clicar, o sistema captura a data atual do seu computador/internet e identifica automaticamente o dia da semana.
+Lógica de Escala: O sistema verifica quem não está de folga hoje, inclusive respeitando a regra de alternância dos Domingos A e B (baseada na referência de 04/01/2026).
+Lista Detalhada: Abre-se uma janela (modal) dentro da própria página exibindo o nome, setor e horário de cada funcionário que está escalado para trabalhar hoje.
+Essa atualização facilita muito a conferência rápida da equipe do dia sem precisar abrir cronogramas passados. O arquivo atualizado está em anexo para você substituir no seu site.
+cronograma.html
+Código · 84.84 KB
+Ver todos os arquivos nesta tarefa
+Como foi este resultado?
+quero que baseado neste site com este seguinte codigo do anexo .. na pagina inicial onde tem um botão interativo de setores que ao clicar nele , ele vá diretamente para a aba de setores
+Lite
+Entendido! Vou transformar o card de "Setores Ativos" no dashboard em um botão interativo. Ao clicar nele, o sistema redirecionará você automaticamente para a aba de "Setores", facilitando a navegação. Vou atualizar o arquivo cronograma.html agora mesmo.
+Transformei o card de "Setores Ativos" em um botão clicável que redireciona para a aba de setores, facilitando a navegação. Atualizei o arquivo `cronograma.html`.
+
+Identifiquei o card de "Setores Ativos" no HTML. Próximo passo é ajustar o código para transformá-lo em um botão clicável que aciona a função showTab para navegação.
+
+Atualizei o card de "Setores Ativos" para ser clicável, chamando a função showTab('sectors'), permitindo navegação direta à aba correspondente.
+
+Lite
+Atualizei o arquivo cronograma.html com o atalho que você solicitou!
+O que foi feito:
+Card Interativo: O card azul de "Setores Ativos" no dashboard agora é clicável e funciona como um botão.
+Navegação Automática: Ao clicar no card, o sistema leva você diretamente para a aba de "Setores".
+Sincronização Visual: O menu superior também se atualiza automaticamente, destacando a aba de "Setores" para que você saiba exatamente onde está.
+Basta baixar o arquivo em anexo e substituir a versão anterior no seu site. Agora a navegação entre o resumo e os detalhes dos setores ficou muito mais rápida!
+cronograma.html
+Código · 85.44 KB
+Ver todos os arquivos nesta tarefa
+Como foi este resultado?
+quero que baseado neste site com este seguinte codigo do anexo .. na pagina inicial onde tem um botão interativo total de funcionarios ao clicar va para aba de funcionarios e de cronogramas criados va para a aba de cronogramas.
+Lite
+Entendido! Vou transformar os cards de "Total de Funcionários" e "Cronogramas Criados" em botões interativos. Assim como fiz com o card de setores, ao clicar neles, você será redirecionado automaticamente para as abas correspondentes de "Funcionários" e "Cronogramas". Vou atualizar o arquivo agora mesmo.
+Vou transformar os cards de "Total de Funcionários" e "Cronogramas Criados" em botões clicáveis que redirecionam às respectivas abas, seguindo o padrão do card de setores.
+
+Transformei os cards de "Total de Funcionários" e "Cronogramas Criados" em botões clicáveis que redirecionam às abas correspondentes, conforme padrão do dashboard.
+
+Lite
+Finalizei as atualizações de interatividade no dashboard!
+O que foi implementado:
+Card "Total de Funcionários": Agora é um botão interativo que, ao ser clicado, leva você diretamente para a aba de Funcionários.
+Card "Cronogramas Criados": Também se tornou um botão interativo que redireciona você para a aba de Cronogramas.
+Navegação Fluida: Todos os cards do dashboard agora funcionam como atalhos inteligentes, facilitando o acesso rápido às diferentes partes do sistema.
+Com isso, todos os indicadores principais do seu painel inicial estão conectados às suas respectivas áreas. O arquivo atualizado está em anexo para substituição no seu site.
+cronograma.html
+Código · 85.55 KB
+Ver todos os arquivos nesta tarefa
+Como foi este resultado?
+quero que baseado neste site com este seguinte codigo do anexo .. exclua a aba relatorios
+Lite
+Entendido. Vou remover a aba de "Relatórios" do seu arquivo cronograma.html, eliminando tanto o botão de navegação quanto o conteúdo correspondente. Por favor, aguarde um momento.
+Lite
+Você não tem créditos suficientes. Por favor, faça upgrade através do link abaixo para continuar.
+https://manus.go.link/iW6sB?action=open-subscription
+Seus créditos foram esgotados. Por favor, atualize seu plano para obter mais créditos.
+Atualizar
+
+
+
+cronograma.html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -23,7 +92,7 @@
             --border-radius: 8px;
             --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+            
             /* Novas cores para PDF avançado */
             --purple-color: #6f42c1;
             --orange-color: #fd7e14;
@@ -38,7 +107,7 @@
             margin: 0;
             padding: 0;
         }
-
+        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -47,7 +116,7 @@
             font-size: 14px;
             line-height: 1.5;
         }
-
+        
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -937,11 +1006,14 @@
                 <i class="fas fa-building"></i>
                 Setores
             </button>
-
+            <button class="nav-tab" onclick="showTab('reports')">
+                <i class="fas fa-chart-bar"></i>
+                Relatórios
+            </button>
         </div>
 
         <!-- Conteúdo das Abas -->
-
+        
         <!-- Dashboard -->
         <div id="dashboard" class="tab-content active">
             <div class="stats-grid">
@@ -988,7 +1060,11 @@
                     <i class="fas fa-download"></i>
                     Exportar Dados
                 </button>
-
+                <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">
+                    <i class="fas fa-upload"></i>
+                    Importar Dados
+                </button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
             </div>
 
             <div class="search-container">
@@ -1053,6 +1129,13 @@
             </div>
         </div>
 
+        <!-- Relatórios -->
+        <div id="reports" class="tab-content">
+            <div class="reports-placeholder">
+                <i class="fas fa-chart-line"></i>
+                <h3>Relatórios</h3>
+                <p>Funcionalidade em desenvolvimento...</p>
+            </div>
         </div>
     </div>
 
@@ -1187,12 +1270,12 @@
                 </button>
                 <button type="button" class="btn btn-secondary" onclick="closeModal('viewScheduleModal')">Fechar</button>
             </div>
-
+            
             <!-- Preview do PDF (escondido por padrão) -->
             <div id="pdfPreviewContainer" class="pdf-preview-container">
                 <!-- Conteúdo do preview será gerado aqui -->
             </div>
-
+            
             <!-- Elemento escondido para captura do html2canvas -->
             <div id="pdfCaptureElement" style="position: absolute; left: -9999px; width: 800px; background: white; padding: 40px;">
                 <!-- Conteúdo para captura será gerado aqui -->
@@ -1235,9 +1318,9 @@
             document.querySelectorAll('.nav-tab').forEach(btn => {
                 btn.classList.remove('active');
             });
-
+            
             document.getElementById(tabId).classList.add('active');
-
+            
             // Se houver um evento (clique direto na aba), ativa o botão
             if (event && event.currentTarget && event.currentTarget.classList.contains('nav-tab')) {
                 event.currentTarget.classList.add('active');
@@ -1281,18 +1364,18 @@
         // Funções de funcionários
         function addEmployee(event) {
             event.preventDefault();
-
+            
             const name = document.getElementById('employeeName').value.trim();
             const sector = document.getElementById('employeeSector').value;
             const schedule = document.getElementById('employeeSchedule').value;
             const offDay = document.getElementById('employeeOffDay').value;
             const sundayCycle = document.getElementById('employeeSundayCycle').value;
-
+            
             if (!name || !sector || !schedule || !offDay) {
                 showNotification('Por favor, preencha todos os campos.', 'error');
                 return;
             }
-
+            
             const employee = {
                 id: Date.now(),
                 name,
@@ -1303,7 +1386,7 @@
                 status: 'Trabalhando',
                 createdAt: new Date().toISOString()
             };
-
+            
             employees.push(employee);
             saveData();
             updateStats();
@@ -1346,7 +1429,7 @@
                 `;
                 return;
             }
-
+            
             container.innerHTML = employees.map(employee => `
                 <div class="employee-card">
                     <div class="employee-name">
@@ -1386,10 +1469,10 @@
         function renderSectors() {
             const container = document.getElementById('sectorsList');
             if (!container) return;
-
+            
             container.innerHTML = sectors.map(sector => {
                 const employeeCount = employees.filter(emp => emp.sector === sector.name).length;
-
+                
                 return `
                     <div class="sector-card" style="border-top-color: ${sector.color};">
                         <div class="sector-header">
@@ -1410,28 +1493,28 @@
         // Funções de cronograma
         function createSchedule(event) {
             event.preventDefault();
-
+            
             const name = document.getElementById('scheduleName').value.trim();
-
+            
             if (!name) {
                 showNotification('Digite um nome para o cronograma.', 'error');
                 return;
             }
-
+            
             if (!selectedDate) {
                 showNotification('Selecione uma data para o cronograma.', 'error');
                 return;
             }
-
+            
             // Validação adicional para garantir que selectedDate é uma data válida
             if (!(selectedDate instanceof Date) || isNaN(selectedDate.getTime())) {
                 showNotification('Data selecionada inválida. Selecione uma data válida.', 'error');
                 return;
             }
-
+            
             // Usar exatamente a data selecionada pelo usuário, garantindo que seja apenas a data (sem horário)
             const scheduleDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0, 0);
-
+            
             const schedule = {
                 id: Date.now(),
                 name,
@@ -1449,20 +1532,20 @@
                         5: 'sexta',
                         6: 'sabado'
                     };
-
+                    
                     let isOffDay = emp.offDay === dayNames[dayOfWeek];
-
+                    
                     // Lógica especial para domingos em 2026
                     if (dayOfWeek === 0) {
                         // Calcular a diferença de semanas a partir de 04/01/2026 (Referência Ciclo A)
                         const referenceDate = new Date(2026, 0, 4); // 04 de Janeiro de 2026
                         const diffTime = scheduleDate.getTime() - referenceDate.getTime();
                         const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
-
+                        
                         // Se a diferença de semanas for par (0, 2, 4...), é Ciclo A
                         // Se a diferença de semanas for ímpar (1, 3, 5...), é Ciclo B
                         const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
-
+                        
                         if (emp.sundayCycle === 'A') {
                             isOffDay = isCycleASunday; // Folga se for domingo de Ciclo A
                         } else if (emp.sundayCycle === 'B') {
@@ -1471,7 +1554,7 @@
                             isOffDay = false; // Ciclo C trabalha sempre
                         }
                     }
-
+                    
                     return {
                         ...emp,
                         status: isOffDay ? 'FOLGA' : 'Trabalhando'
@@ -1479,7 +1562,7 @@
                 }),
                 createdAt: new Date().toISOString()
             };
-
+            
             schedules.push(schedule);
             saveData();
             updateStats();
@@ -1501,12 +1584,12 @@
         function viewSchedule(id) {
             const schedule = schedules.find(s => s.id === id);
             if (!schedule) return;
-
+            
             document.getElementById('viewScheduleTitle').textContent = schedule.name;
-
+            
             // Garantir que a data seja processada corretamente
             let displayDate, displayDay;
-
+            
             if (schedule.date) {
                 // Se a data está armazenada como string ISO, converter para Date
                 const scheduleDate = typeof schedule.date === 'string' ? new Date(schedule.date) : schedule.date;
@@ -1517,7 +1600,7 @@
                 displayDate = schedule.dateText || 'Data não disponível';
                 displayDay = schedule.dayText || 'Dia não disponível';
             }
-
+            
             const detailsContainer = document.getElementById('scheduleDetails');
             detailsContainer.innerHTML = `
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
@@ -1530,13 +1613,13 @@
                 </div>
                 ${renderScheduleEmployees(schedule.employees)}
             `;
-
+            
             showModal('viewScheduleModal');
         }
 
         function renderScheduleEmployees(employees) {
             const organizedEmployees = organizeScheduleEmployees(employees);
-
+            
             return organizedEmployees.map(sector => `
                 <div style="margin-bottom: 25px; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid ${getSectorColor(sector.name)};">
                     <h4 style="margin-bottom: 15px; color: #495057; display: flex; align-items: center; gap: 10px;">
@@ -1573,11 +1656,11 @@
 
         function organizeScheduleEmployees(employees) {
             const organized = [];
-
+            
             sectors.forEach(sector => {
                 const sectorEmployees = employees.filter(emp => emp.sector === sector.name);
                 if (sectorEmployees.length === 0) return;
-
+                
                 const scheduleGroups = {};
                 sectorEmployees.forEach(employee => {
                     if (!scheduleGroups[employee.schedule]) {
@@ -1585,26 +1668,26 @@
                     }
                     scheduleGroups[employee.schedule].push(employee);
                 });
-
+                
                 const schedulesArr = Object.keys(scheduleGroups).map(schedule => ({
                     schedule,
                     employees: scheduleGroups[schedule]
                 }));
-
+                
                 organized.push({
                     name: sector.name,
                     employees: sectorEmployees,
                     schedules: schedulesArr
                 });
             });
-
+            
             return organized;
         }
 
         function renderSchedules() {
             const container = document.getElementById('schedulesList');
             if (!container) return;
-
+            
             if (schedules.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -1615,11 +1698,11 @@
                 `;
                 return;
             }
-
+            
             container.innerHTML = schedules.map(schedule => {
                 // Garantir que a data seja processada corretamente para exibição
                 let displayDate, displayDay;
-
+                
                 if (schedule.date) {
                     // Se a data está armazenada como string ISO, converter para Date
                     const scheduleDate = typeof schedule.date === 'string' ? new Date(schedule.date) : schedule.date;
@@ -1630,7 +1713,7 @@
                     displayDate = schedule.dateText || 'Data não disponível';
                     displayDay = schedule.dayText || 'Dia não disponível';
                 }
-
+                
                 return `
                     <div class="schedule-card">
                         <div class="schedule-header">
@@ -1665,19 +1748,19 @@
         function generateCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
-
+            
             const calendarTitle = document.getElementById('calendarTitle');
             if (calendarTitle) {
                 calendarTitle.textContent = 
                     new Date(year, month).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
             }
-
+            
             const firstDay = new Date(year, month, 1);
-
+            
             const calendarGrid = document.getElementById('calendarGrid');
             if (!calendarGrid) return;
             calendarGrid.innerHTML = '';
-
+            
             // Cabeçalhos dos dias (INCLUINDO DOMINGO)
             const dayHeaders = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             dayHeaders.forEach(day => {
@@ -1686,37 +1769,37 @@
                 dayHeader.textContent = day;
                 calendarGrid.appendChild(dayHeader);
             });
-
+            
             // Calcular o primeiro dia da semana (domingo = 0)
             let startDate = new Date(firstDay);
             const firstDayOfWeek = firstDay.getDay();
             startDate.setDate(startDate.getDate() - firstDayOfWeek);
-
+            
             // Gerar dias do calendário (6 semanas x 7 dias = 42 células)
             const currentDateObj = new Date(startDate);
             for (let i = 0; i < 42; i++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = currentDateObj.getDate();
-
+                
                 if (currentDateObj.getMonth() !== month) {
                     dayElement.classList.add('other-month');
                 }
-
+                
                 if (currentDateObj.toDateString() === new Date().toDateString()) {
                     dayElement.classList.add('today');
                 }
-
+                
                 if (selectedDate && currentDateObj.toDateString() === selectedDate.toDateString()) {
                     dayElement.classList.add('selected');
                 }
-
+                
                 // Capturar a data atual do loop para o evento de clique
                 const clickedDate = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), currentDateObj.getDate());
                 dayElement.addEventListener('click', () => {
                     selectDate(clickedDate);
                 });
-
+                
                 calendarGrid.appendChild(dayElement);
                 currentDateObj.setDate(currentDateObj.getDate() + 1);
             }
@@ -1738,9 +1821,9 @@
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.textContent = message;
-
+            
             document.body.appendChild(notification);
-
+            
             setTimeout(() => {
                 notification.remove();
             }, 4000);
@@ -1772,7 +1855,7 @@
         function togglePDFPreview() {
             const container = document.getElementById('pdfPreviewContainer');
             const toggleText = document.getElementById('pdfToggleText');
-
+            
             if (!pdfPreviewVisible) {
                 generatePDFPreview();
                 container.classList.add('show');
@@ -1789,12 +1872,12 @@
         function generatePDFPreview() {
             const scheduleTitle = document.getElementById('viewScheduleTitle').textContent;
             const schedule = schedules.find(s => s.name === scheduleTitle);
-
+            
             if (!schedule) return;
 
             // Garantir que a data seja processada corretamente
             let displayDate, displayDay;
-
+            
             if (schedule.date) {
                 const scheduleDate = typeof schedule.date === 'string' ? new Date(schedule.date) : schedule.date;
                 displayDate = scheduleDate.toLocaleDateString('pt-BR');
@@ -1806,7 +1889,7 @@
 
             const container = document.getElementById('pdfPreviewContainer');
             const organizedEmployees = organizeScheduleEmployees(schedule.employees);
-
+            
             container.innerHTML = `
                 <div class="pdf-header">
                     <div class="pdf-logo">
@@ -1816,7 +1899,7 @@
                     <div class="pdf-title">CRONOGRAMA DE ESCALA DA FRENTE DE CAIXA</div>
                     <div class="pdf-subtitle">${displayDate} - ${displayDay}</div>
                 </div>
-
+                
                 <div class="pdf-section">
                     <div class="pdf-section-title">
                         <i class="fas fa-info-circle"></i>
@@ -1826,7 +1909,7 @@
                         <i class="fas fa-clock"></i> Criado em: ${new Date(schedule.createdAt).toLocaleDateString('pt-BR')}
                     </p>
                 </div>
-
+                
                 ${organizedEmployees.map(sector => `
                     <div class="pdf-section">
                         <div class="pdf-section-title">
@@ -1877,7 +1960,7 @@
         function downloadSchedulePDF() {
             const scheduleTitle = document.getElementById('viewScheduleTitle').textContent;
             const schedule = schedules.find(s => s.name === scheduleTitle);
-
+            
             if (!schedule) {
                 showNotification('Erro ao encontrar cronograma para exportação.', 'error');
                 return;
@@ -1886,7 +1969,7 @@
             try {
                 const captureElement = document.getElementById('pdfCaptureElement');
                 const organizedEmployees = organizeScheduleEmployees(schedule.employees);
-
+                
                 let displayDate, displayDay;
                 if (schedule.date) {
                     const scheduleDate = typeof schedule.date === 'string' ? new Date(schedule.date) : schedule.date;
@@ -1896,7 +1979,7 @@
                     displayDate = schedule.dateText || 'Data não disponível';
                     displayDay = schedule.dayText || 'Dia não disponível';
                 }
-
+                
                 captureElement.innerHTML = `
                     <div style="font-family: 'Inter', Arial, sans-serif; color: #333; line-height: 1.6;">
                         <div style="background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%); color: white; padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 30px;">
@@ -1906,7 +1989,7 @@
                             <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 10px;">CRONOGRAMA DE ESCALA DA FRENTE DE CAIXA</h1>
                             <p style="font-size: 16px; opacity: 0.9;">${displayDate} - ${displayDay}</p>
                         </div>
-
+                        
                         <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 30px; border-left: 4px solid #007bff;">
                             <h2 style="font-size: 20px; font-weight: 600; color: #495057; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                                 📋 ${schedule.name}
@@ -1915,7 +1998,7 @@
                                 🕒 Criado em: ${new Date(schedule.createdAt).toLocaleDateString('pt-BR')}
                             </p>
                         </div>
-
+                        
                         ${organizedEmployees.map(sector => `
                             <div style="background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid ${getSectorColor(sector.name)};">
                                 <h3 style="font-size: 18px; font-weight: 600; color: #495057; margin-bottom: 20px;">
@@ -1948,14 +2031,14 @@
                                 `).join('')}
                             </div>
                         `).join('')}
-
+                        
                         <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px; color: #6c757d; font-size: 12px;">
                             <p>📄 Documento gerado automaticamente pelo Sistema de Gerenciamento de Escala - Fort Atacadista</p>
                             <p>📅 Data de geração: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
                         </div>
                     </div>
                 `;
-
+                
                 setTimeout(() => {
                     html2canvas(captureElement, { 
                         scale: 2,
@@ -1965,24 +2048,24 @@
                     }).then(canvas => {
                         const { jsPDF } = window.jspdf;
                         const doc = new jsPDF('p', 'mm', 'a4');
-
+                        
                         const imgData = canvas.toDataURL('image/png');
                         const imgWidth = 210;
                         const pageHeight = 295;
                         const imgHeight = (canvas.height * imgWidth) / canvas.width;
                         let heightLeft = imgHeight;
                         let position = 0;
-
+                        
                         doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
                         heightLeft -= pageHeight;
-
+                        
                         while (heightLeft >= 0) {
                             position = heightLeft - imgHeight;
                             doc.addPage();
                             doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
                             heightLeft -= pageHeight;
                         }
-
+                        
                         const fileName = `cronograma_${schedule.name.replace(/\s+/g, '_')}_${schedule.dateText.replace(/\//g, '-')}.pdf`;
                         doc.save(fileName);
                         showNotification('PDF gerado com sucesso!', 'success');
@@ -2016,9 +2099,9 @@
             const totalEmployeesEl = document.getElementById('totalEmployees');
             const workingTodayEl = document.getElementById('workingToday');
             const totalSchedulesEl = document.getElementById('totalSchedules');
-
+            
             if (totalEmployeesEl) totalEmployeesEl.textContent = employees.length;
-
+            
             // Calcular quem trabalha hoje baseado na data real
             const today = new Date();
             const workingTodayCount = employees.filter(emp => {
@@ -2026,15 +2109,15 @@
                 const dayNames = {
                     0: 'domingo', 1: 'segunda', 2: 'terca', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sabado'
                 };
-
+                
                 let isOffDay = emp.offDay === dayNames[dayOfWeek];
-
+                
                 if (dayOfWeek === 0) {
                     const referenceDate = new Date(2026, 0, 4);
                     const diffTime = today.getTime() - referenceDate.getTime();
                     const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
                     const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
-
+                    
                     if (emp.sundayCycle === 'A') isOffDay = isCycleASunday;
                     else if (emp.sundayCycle === 'B') isOffDay = !isCycleASunday;
                     else isOffDay = false;
@@ -2052,16 +2135,16 @@
             const dayNames = {
                 0: 'domingo', 1: 'segunda', 2: 'terca', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sabado'
             };
-
+            
             const workingEmployees = employees.filter(emp => {
                 let isOffDay = emp.offDay === dayNames[dayOfWeek];
-
+                
                 if (dayOfWeek === 0) {
                     const referenceDate = new Date(2026, 0, 4);
                     const diffTime = today.getTime() - referenceDate.getTime();
                     const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
                     const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
-
+                    
                     if (emp.sundayCycle === 'A') isOffDay = isCycleASunday;
                     else if (emp.sundayCycle === 'B') isOffDay = !isCycleASunday;
                     else isOffDay = false;
@@ -2071,9 +2154,9 @@
 
             const container = document.getElementById('workingTodayList');
             const title = document.getElementById('workingTodayTitle');
-
+            
             title.innerHTML = `Trabalhando Hoje (${today.toLocaleDateString('pt-BR')})`;
-
+            
             if (workingEmployees.length === 0) {
                 container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 20px;">Ninguém escalado para hoje.</p>';
             } else {
@@ -2100,7 +2183,7 @@
                     </div>
                 `).join('');
             }
-
+            
             showModal('workingTodayModal');
         }
 
@@ -2123,7 +2206,7 @@
         function loadData() {
             const savedEmployees = localStorage.getItem('fortAtacadistaEmployees');
             const savedSchedules = localStorage.getItem('fortAtacadistaSchedules');
-
+            
             if (savedEmployees) employees = JSON.parse(savedEmployees);
             if (savedSchedules) schedules = JSON.parse(savedSchedules);
         }
@@ -2143,7 +2226,22 @@
             showNotification('Dados exportados!', 'success');
         }
 
-         catch (error) {
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.employees) employees = data.employees;
+                    if (data.schedules) schedules = data.schedules;
+                    saveData();
+                    updateStats();
+                    renderEmployees();
+                    renderDashboardEmployees();
+                    renderSchedules();
+                    showNotification('Dados importados!', 'success');
+                } catch (error) {
                     showNotification('Erro na importação!', 'error');
                 }
             };
@@ -2153,3 +2251,5 @@
     </script>
 </body>
 </html>
+Sugestões de melhoria para este site? - Manus
+Explicar
