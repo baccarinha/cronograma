@@ -937,10 +937,7 @@
                 <i class="fas fa-building"></i>
                 Setores
             </button>
-            <button class="nav-tab" onclick="showTab('reports')">
-                <i class="fas fa-chart-bar"></i>
-                Relatórios
-            </button>
+
         </div>
 
         <!-- Conteúdo das Abas -->
@@ -1060,14 +1057,7 @@
             </div>
         </div>
 
-        <!-- Relatórios -->
-        <div id="reports" class="tab-content">
-            <div class="reports-placeholder">
-                <i class="fas fa-chart-line"></i>
-                <h3>Relatórios</h3>
-                <p>Funcionalidade em desenvolvimento...</p>
-            </div>
-        </div>
+
     </div>
 
     <!-- Modal Adicionar Funcionário -->
@@ -2236,20 +2226,28 @@
         function saveData() {
             localStorage.setItem('fortAtacadistaEmployees', JSON.stringify(employees));
             localStorage.setItem('fortAtacadistaSchedules', JSON.stringify(schedules));
+            localStorage.setItem('fortAtacadistaSectors', JSON.stringify(sectors));
         }
 
         function loadData() {
             const savedEmployees = localStorage.getItem('fortAtacadistaEmployees');
             const savedSchedules = localStorage.getItem('fortAtacadistaSchedules');
+            const savedSectors = localStorage.getItem('fortAtacadistaSectors');
             
             if (savedEmployees) employees = JSON.parse(savedEmployees);
             if (savedSchedules) schedules = JSON.parse(savedSchedules);
+            if (savedSectors) {
+                const parsedSectors = JSON.parse(savedSectors);
+                sectors.length = 0;
+                parsedSectors.forEach(s => sectors.push(s));
+            }
         }
 
         function exportData() {
             const data = {
                 employees: employees,
                 schedules: schedules,
+                sectors: sectors,
                 exportDate: new Date().toISOString()
             };
             const dataStr = JSON.stringify(data, null, 2);
@@ -2270,11 +2268,16 @@
                     const data = JSON.parse(e.target.result);
                     if (data.employees) employees = data.employees;
                     if (data.schedules) schedules = data.schedules;
+                    if (data.sectors) {
+                        sectors.length = 0;
+                        data.sectors.forEach(s => sectors.push(s));
+                    }
                     saveData();
                     updateStats();
                     renderEmployees();
                     renderDashboardEmployees();
                     renderSchedules();
+                    renderSectors();
                     showNotification('Dados importados!', 'success');
                 } catch (error) {
                     showNotification('Erro na importação!', 'error');
