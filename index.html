@@ -966,7 +966,7 @@
                     <div class="stat-icon">
                         <i class="fas fa-building"></i>
                     </div>
-                    <div class="stat-number">5</div>
+                    <div class="stat-number" id="activeSectorsCount">5</div>
                     <div class="stat-label">Setores Ativos</div>
                 </div>
                 <div class="stat-card secondary" onclick="showTab('schedules')" style="cursor: pointer;">
@@ -1180,6 +1180,39 @@
         </div>
     </div>
 
+    <!-- Modal Editar Setor -->
+    <div id="editSectorModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Setor</h2>
+                <button class="close-btn" onclick="closeModal('editSectorModal')">&times;</button>
+            </div>
+            <form id="editSectorForm">
+                <input type="hidden" id="editSectorIndex">
+                <div class="form-group">
+                    <label class="form-label">Nome do Setor</label>
+                    <input type="text" class="form-input" id="editSectorName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cor (Hexadecimal)</label>
+                    <input type="color" class="form-input" id="editSectorColor" style="height: 50px;" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ícone (FontAwesome class)</label>
+                    <input type="text" class="form-input" id="editSectorIcon" placeholder="Ex: fas fa-users" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-input" id="editSectorDescription" rows="3" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editSectorModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal Visualizar Cronograma -->
     <div id="viewScheduleModal" class="modal">
         <div class="modal-content" style="max-width: 900px;">
@@ -1224,10 +1257,10 @@
 
         const sectors = [
             { name: 'Caixa', color: '#FF0000', icon: 'fas fa-cash-register', description: 'Operação de frente de caixa' },
-            { name: 'Auto Atendimento', color: '#28a745', icon: 'fas fa-tools', description: 'Caixas de autoatendimento' },
+            { name: 'Auto Atendimento', color: '#28a745', icon: 'fas fa-desktop', description: 'Caixas de autoatendimento' },
             { name: 'Carrinhos', color: '#ffc107', icon: 'fas fa-shopping-cart', description: 'Organização de carrinhos' },
             { name: 'Assistentes', color: '#17a2b8', icon: 'fas fa-hands-helping', description: 'Apoio aos clientes e operadores de caixas' },
-            { name: 'Gerente', color: '#343a40', icon: 'fas fa-user-shield', description: 'Gerência' }
+            { name: 'Fiscal', color: '#6f42c1', icon: 'fas fa-user-shield', description: 'Fiscalização e prevenção' }
         ];
 
         // Inicialização
@@ -1401,25 +1434,93 @@
             const container = document.getElementById('sectorsList');
             if (!container) return;
             
-            container.innerHTML = sectors.map(sector => {
+            container.innerHTML = sectors.map((sector, index) => {
                 const employeeCount = employees.filter(emp => emp.sector === sector.name).length;
                 
+                const sectorEmployees = employees.filter(emp => emp.sector === sector.name);
+                const employeeNames = sectorEmployees.length > 0 
+                    ? `<div class="sector-employee-list" style="margin-top: 10px; font-size: 0.85em; color: #666;">
+                        <strong>Funcionários:</strong> ${sectorEmployees.map(e => e.name).join(', ')}
+                       </div>`
+                    : '<div style="margin-top: 10px; font-size: 0.85em; color: #999;">Nenhum funcionário cadastrado</div>';
+
                 return `
-                    <div class="sector-card" style="border-top-color: ${sector.color};">
-                        <div class="sector-header">
-                            <div class="sector-icon" style="background: ${sector.color};">
+                    <div class="sector-card" style="border-top: 4px solid ${sector.color}; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s ease; position: relative;">
+                        <button onclick="openEditSectorModal(${index})" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #6c757d; cursor: pointer; font-size: 16px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <div class="sector-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                            <div class="sector-icon" style="background: ${sector.color}; color: white; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
                                 <i class="${sector.icon}"></i>
                             </div>
                             <div class="sector-info">
-                                <h3>${sector.name}</h3>
-                                <div class="sector-description">${sector.description}</div>
-                                <div class="sector-count">${employeeCount} funcionários</div>
+                                <h3 style="margin: 0; color: #333; font-size: 1.2em;">${sector.name}</h3>
+                                <div class="sector-count" style="font-weight: 700; color: ${sector.color}; font-size: 1.1em;">${employeeCount} funcionários</div>
                             </div>
                         </div>
+                        <div class="sector-description" style="color: #666; font-size: 0.9em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">${sector.description}</div>
+                        ${employeeNames}
                     </div>
                 `;
             }).join('');
         }
+
+        function openEditSectorModal(index) {
+            const sector = sectors[index];
+            document.getElementById('editSectorIndex').value = index;
+            document.getElementById('editSectorName').value = sector.name;
+            document.getElementById('editSectorColor').value = sector.color;
+            document.getElementById('editSectorIcon').value = sector.icon;
+            document.getElementById('editSectorDescription').value = sector.description;
+            showModal('editSectorModal');
+        }
+
+        document.getElementById('editSectorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const index = document.getElementById('editSectorIndex').value;
+            const oldName = sectors[index].name;
+            const newName = document.getElementById('editSectorName').value.trim();
+            const newColor = document.getElementById('editSectorColor').value;
+            const newIcon = document.getElementById('editSectorIcon').value.trim();
+            const newDescription = document.getElementById('editSectorDescription').value.trim();
+
+            if (!newName || !newColor || !newIcon || !newDescription) {
+                showNotification('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+
+            // Atualizar funcionários se o nome do setor mudou
+            if (oldName !== newName) {
+                employees.forEach(emp => {
+                    if (emp.sector === oldName) emp.sector = newName;
+                });
+                
+                // Atualizar o select de setores no modal de funcionários
+                const sectorSelect = document.getElementById('employeeSector');
+                const options = Array.from(sectorSelect.options);
+                const optionToUpdate = options.find(opt => opt.value === oldName);
+                if (optionToUpdate) {
+                    optionToUpdate.value = newName;
+                    optionToUpdate.textContent = newName;
+                }
+            }
+
+            // Salvar alterações no setor
+            sectors[index] = {
+                name: newName,
+                color: newColor,
+                icon: newIcon,
+                description: newDescription
+            };
+
+            saveData();
+            renderSectors();
+            renderEmployees();
+            renderDashboardEmployees();
+            updateStats();
+            closeModal('editSectorModal');
+            showNotification('Setor atualizado com sucesso!', 'success');
+        });
 
         // Funções de cronograma
         function createSchedule(event) {
@@ -2058,6 +2159,9 @@
 
             if (workingTodayEl) workingTodayEl.textContent = workingTodayCount;
             if (totalSchedulesEl) totalSchedulesEl.textContent = schedules.length;
+            
+            const activeSectorsEl = document.getElementById('activeSectorsCount');
+            if (activeSectorsEl) activeSectorsEl.textContent = sectors.length;
         }
 
         function showWorkingTodayDetails() {
