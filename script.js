@@ -1,4 +1,3 @@
-
 // Variáveis globais
 let employees = [];
 let schedules = [];
@@ -518,16 +517,92 @@ function downloadSchedulePDF() {
     if (!schedule) return;
 
     const capture = document.getElementById('pdfCaptureElement');
-    capture.innerHTML = document.getElementById('pdfPreviewContainer').innerHTML;
+    
+    // Organizar funcionários por setor para o PDF
+    const organized = {};
+    sectors.forEach(s => {
+        organized[s.name] = schedule.employees.filter(e => e.sector === s.name);
+    });
+
+    // Criar conteúdo visual rico para o PDF
+    capture.innerHTML = `
+        <div style="font-family: 'Inter', Arial, sans-serif; padding: 20px; color: #333;">
+            <div style="background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%); color: white; padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 30px;">
+                <div style="background: white; color: #FF0000; padding: 10px 20px; border-radius: 8px; display: inline-block; font-weight: 800; font-size: 16px; margin-bottom: 15px;">
+                    🏪 FORT ATACADISTA
+                </div>
+                <h1 style="font-size: 24px; margin: 0;">CRONOGRAMA DE ESCALA</h1>
+                <p style="font-size: 16px; opacity: 0.9; margin-top: 5px;">${schedule.name} | ${schedule.dateText}</p>
+            </div>
+
+            ${Object.keys(organized).map(sectorName => {
+                const sectorEmployees = organized[sectorName];
+                if (sectorEmployees.length === 0) return '';
+                const sectorInfo = sectors.find(s => s.name === sectorName);
+                
+                return `
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 18px; color: #444; border-bottom: 3px solid ${sectorInfo.color}; padding-bottom: 5px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span style="background: ${sectorInfo.color}; width: 12px; height: 12px; border-radius: 50%; display: inline-block;"></span>
+                            ${sectorName} (${sectorEmployees.length})
+                        </h2>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            ${sectorEmployees.map(e => `
+                                <div style="background: #fff; border: 1px solid #eee; border-left: 5px solid ${e.status === 'FOLGA' ? '#dc3545' : '#28a745'}; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <div style="font-weight: 700; font-size: 15px; margin-bottom: 8px; color: #222;">
+                                        👤 ${e.name}
+                                    </div>
+                                    <div style="font-size: 13px; color: #666; margin-bottom: 5px;">
+                                        🕒 Horário: <strong>${e.schedule}</strong>
+                                    </div>
+                                    <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                                        📍 Setor: ${e.sector}
+                                    </div>
+                                    <div style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: ${e.status === 'FOLGA' ? '#fff1f0' : '#f6ffed'}; color: ${e.status === 'FOLGA' ? '#cf1322' : '#389e0d'}; border: 1px solid ${e.status === 'FOLGA' ? '#ffa39e' : '#b7eb8f'};">
+                                        ${e.status === 'FOLGA' ? '🏠 FOLGA' : '💼 TRABALHANDO'}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+            
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 11px;">
+                Documento gerado em ${new Date().toLocaleString('pt-BR')} | Sistema de Gestão Fort Atacadista
+            </div>
+        </div>
+    `;
     
     setTimeout(() => {
-        html2canvas(capture, { scale: 2 }).then(canvas => {
+        html2canvas(capture, { 
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
             const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
-            doc.save(`escala_${schedule.name}.pdf`);
-            showNotification('PDF gerado!', 'success');
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                doc.addPage();
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            doc.save(`escala_${schedule.name.replace(/\s+/g, '_')}.pdf`);
+            showNotification('PDF com cards gerado!', 'success');
+            capture.innerHTML = ''; // Limpar após gerar
         });
     }, 500);
 }
