@@ -990,6 +990,132 @@ body {
     color: var(--success-color);
 }
 
+.pdf-document {
+    padding: 16px;
+    color: #333;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.pdf-document .pdf-header {
+    margin-bottom: 14px;
+    padding: 16px;
+}
+
+.pdf-document .pdf-logo {
+    margin-bottom: 4px;
+    font-size: 16px;
+}
+
+.pdf-document .pdf-title {
+    margin-bottom: 3px;
+    font-size: 22px;
+}
+
+.pdf-document .pdf-subtitle {
+    font-size: 12px;
+}
+
+.pdf-document .pdf-section-title {
+    margin: 0 0 10px;
+    padding: 0 0 6px;
+    border-bottom: 1px solid #dee2e6;
+    color: #495057;
+    font-size: 13px;
+}
+
+.pdf-sector {
+    margin-bottom: 14px;
+}
+
+.pdf-sector-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 4px;
+    padding: 0 0 5px;
+    border-bottom: 2px solid var(--sector-color, #6c757d);
+    color: #343a40;
+    font-size: 14px;
+}
+
+.pdf-sector-title span {
+    color: #6c757d;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.pdf-shift-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 11px;
+}
+
+.pdf-shift-table th,
+.pdf-shift-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #e6e8eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+.pdf-shift-table th {
+    background: #f4f6f8;
+    color: #495057;
+    font-weight: 700;
+}
+
+.pdf-shift-table th:first-child,
+.pdf-shift-time {
+    width: 130px;
+    white-space: nowrap;
+}
+
+.pdf-shift-time {
+    color: #343a40;
+    font-weight: 600;
+}
+
+.pdf-worker-list {
+    line-height: 1.5;
+}
+
+.pdf-employee-entry {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    margin: 0 10px 2px 0;
+    white-space: nowrap;
+}
+
+.pdf-off-label {
+    padding: 0 4px;
+    border: 1px solid #ffc9c9;
+    border-radius: 3px;
+    background: #fff1f0;
+    color: #c53030;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+}
+
+.pdf-empty-state {
+    padding: 12px;
+    color: #6c757d;
+}
+
+.pdf-generated-at {
+    margin-top: 12px;
+    padding-top: 6px;
+    border-top: 1px solid #eee;
+    color: #6c757d;
+    font-size: 9px;
+    text-align: right;
+}
+
 .pdf-status-off {
     background: rgba(220, 53, 69, 0.1);
     color: var(--danger-color);
