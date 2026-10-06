@@ -368,6 +368,14 @@ body {
     background: rgba(220, 53, 69, 0.05);
 }
 
+.employee-delete-button {
+    width: auto;
+    gap: 6px;
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
 .employee-details {
     margin-bottom: 15px;
 }
