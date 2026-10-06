@@ -206,8 +206,7 @@
                         <option value="quarta">Quarta-feira</option>
                         <option value="quinta">Quinta-feira</option>
                         <option value="sexta">Sexta-feira</option>
-                        <option value="sabado">Sábado</option>
-                        <option value="nenhum">Nenhum dia da semana</option>
+                        <option value="nenhum">Nenhum dia de semana</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -222,6 +221,42 @@
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('addEmployeeModal')">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Folgas do Funcionário -->
+    <div id="editEmployeeOffDaysModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Folgas do Funcionário</h2>
+                <button class="close-btn" onclick="closeModal('editEmployeeOffDaysModal')">&times;</button>
+            </div>
+            <form id="editEmployeeOffDaysForm">
+                <input type="hidden" id="editEmployeeId">
+                <div class="form-group">
+                    <label class="form-label" for="editEmployeeOffDay">Dia de Folga na Semana</label>
+                    <select class="form-select" id="editEmployeeOffDay" required>
+                        <option value="segunda">Segunda-feira</option>
+                        <option value="terca">Terça-feira</option>
+                        <option value="quarta">Quarta-feira</option>
+                        <option value="quinta">Quinta-feira</option>
+                        <option value="sexta">Sexta-feira</option>
+                        <option value="nenhum">Nenhum dia de semana</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editEmployeeSundayCycle">Ciclo de Folga de Domingo</label>
+                    <select class="form-select" id="editEmployeeSundayCycle" required>
+                        <option value="A">Domingo A (Folga: 04/01, 18/01, 01/02...)</option>
+                        <option value="B">Domingo B (Folga: 11/01, 25/01, 08/02...)</option>
+                        <option value="C">Domingo C (Trabalha todos os domingos)</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editEmployeeOffDaysModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Folgas</button>
                 </div>
             </form>
         </div>
@@ -343,4 +378,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
