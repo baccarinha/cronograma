@@ -90,6 +90,67 @@ body {
     font-size: 20px;
 }
 
+.current-datetime {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin: -9px auto 18px;
+}
+
+.current-datetime-main,
+.clock-sync-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.current-datetime-main {
+    flex-wrap: wrap;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.current-datetime-main i {
+    opacity: 0.9;
+}
+
+.clock-sync-info {
+    flex-wrap: wrap;
+    font-size: 11px;
+    opacity: 0.9;
+}
+
+.clock-sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffc107;
+}
+
+.clock-sync-dot.synced {
+    background: #20c997;
+}
+
+.clock-sync-dot.offline {
+    background: #ffc107;
+}
+
+.clock-source-link {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.clock-source-link:hover {
+    color: #fff3cd;
+}
+
 .main-title {
     font-size: 32px;
     font-weight: 700;
