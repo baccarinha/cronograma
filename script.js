@@ -98,13 +98,17 @@ function addEmployee(event) {
 }
 
 function deleteEmployee(id) {
-    if (confirm('Tem certeza que deseja excluir este funcionário?')) {
-        employees = employees.filter(emp => emp.id !== id);
+    const employee = employees.find(emp => String(emp.id) === String(id));
+    if (!employee) return;
+
+    if (confirm(`Tem certeza que deseja excluir ${employee.name} do sistema?`)) {
+        employees = employees.filter(emp => String(emp.id) !== String(id));
         saveData();
         renderEmployees();
         renderDashboardEmployees();
+        renderSectors();
         updateStats();
-        showNotification('Funcionário excluído com sucesso!', 'success');
+        showNotification(`${employee.name} excluído com sucesso!`, 'success');
     }
 }
 
@@ -166,8 +170,9 @@ function renderEmployees() {
                     <button class="employee-card-action" type="button" aria-label="Editar folgas de ${employee.name}" title="Editar folgas" onclick="openEditEmployeeOffDays(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
-                    <button class="employee-card-action delete" type="button" aria-label="Excluir ${employee.name}" title="Excluir funcionário" onclick="deleteEmployee(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
+                    <button class="employee-card-action delete employee-delete-button" type="button" aria-label="Excluir ${employee.name}" title="Excluir funcionário" onclick="deleteEmployee(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
                         <i class="fas fa-trash"></i>
+                        <span>Excluir</span>
                     </button>
                 </div>
             </div>
