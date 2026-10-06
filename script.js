@@ -147,6 +147,7 @@ function addEmployee(event) {
     const schedule = document.getElementById('employeeSchedule').value;
     const offDay = document.getElementById('employeeOffDay').value;
     const sundayCycle = document.getElementById('employeeSundayCycle').value;
+    const pdfRole = document.getElementById('employeePdfRole').value || 'employee';
     
     if (!name || !sector || !schedule || !offDay) {
         showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
@@ -157,6 +158,7 @@ function addEmployee(event) {
         id: Date.now(),
         name,
         sector,
+        pdfRole,
         schedule,
         offDay,
         sundayCycle: sundayCycle || 'C',
@@ -199,6 +201,7 @@ function openEditEmployeeOffDays(id) {
             ? employee.offDay
             : 'nenhum';
     document.getElementById('editEmployeeSundayCycle').value = employee.sundayCycle || 'C';
+    document.getElementById('editEmployeePdfRole').value = employee.pdfRole || 'employee';
     showModal('editEmployeeOffDaysModal');
 }
 
@@ -213,13 +216,14 @@ function updateEmployeeOffDays(event) {
 
     employee.offDay = document.getElementById('editEmployeeOffDay').value;
     employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
+    employee.pdfRole = document.getElementById('editEmployeePdfRole').value || 'employee';
 
     saveData();
     renderEmployees();
     renderDashboardEmployees();
     updateStats();
     closeModal('editEmployeeOffDaysModal');
-    showNotification('Folgas do funcionário atualizadas!', 'success');
+    showNotification('Folgas e classificação para o PDF atualizadas!', 'success');
 }
 
 function renderEmployees() {
@@ -243,7 +247,7 @@ function renderEmployees() {
                 <i class="fas fa-user"></i>
                 ${employee.name}
                 <div class="employee-card-actions">
-                    <button class="employee-card-action" type="button" aria-label="Editar folgas de ${employee.name}" title="Editar folgas" onclick="openEditEmployeeOffDays(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
+                    <button class="employee-card-action" type="button" aria-label="Editar folgas e classificação no PDF de ${employee.name}" title="Editar folgas e classificação no PDF" onclick="openEditEmployeeOffDays(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
                     <button class="employee-card-action delete employee-delete-button" type="button" aria-label="Excluir ${employee.name}" title="Excluir funcionário" onclick="deleteEmployee(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
@@ -606,39 +610,70 @@ function togglePDFPreview() {
     }
 }
 
-function groupScheduleEmployeesBySectorAndShift(employeeList) {
-    const sectorGroups = new Map();
+function groupScheduleEmployeesByShift(employeeList) {
+    const shiftGroups = new Map();
 
     employeeList.forEach(employee => {
-        const sectorName = employee.sector || 'Sem setor';
         const workHours = employee.schedule || 'Horário não informado';
-        if (!sectorGroups.has(sectorName)) sectorGroups.set(sectorName, new Map());
-
-        const shiftGroups = sectorGroups.get(sectorName);
         if (!shiftGroups.has(workHours)) shiftGroups.set(workHours, []);
         shiftGroups.get(workHours).push(employee);
     });
 
-    const configuredSectors = sectors.map(sector => sector.name).filter(name => sectorGroups.has(name));
-    const otherSectors = Array.from(sectorGroups.keys()).filter(name => !sectors.some(sector => sector.name === name));
-
-    return [...configuredSectors, ...otherSectors].map(name => {
-        const sector = sectors.find(item => item.name === name);
-        const shifts = Array.from(sectorGroups.get(name), ([workHours, workers]) => ({ workHours, workers }));
-        const count = shifts.reduce((total, shift) => total + shift.workers.length, 0);
-        return { name, color: sector?.color || '#6c757d', count, shifts };
-    });
+    return Array.from(shiftGroups, ([workHours, workers]) => ({ workHours, workers }));
 }
 
-function renderPDFEmployeeEntries(workers) {
-    return workers.map(worker => {
+function renderPDFScheduleTable(employeeList) {
+    if (!employeeList.length) return '';
+
+    const shiftGroups = groupScheduleEmployeesByShift(employeeList);
+    const employeeRows = shiftGroups.map(shift => shift.workers.map((worker, index) => {
         const isOff = String(worker.status || '').toUpperCase() === 'FOLGA';
-        return `<span class="pdf-employee-entry">${worker.name}${isOff ? '<strong class="pdf-off-label">Folga</strong>' : ''}</span>`;
-    }).join('');
+        return `
+            <tr>
+                <td class="pdf-worker-name">${worker.name}</td>
+                ${index === 0 ? `<td class="pdf-shift-time" rowspan="${shift.workers.length}">${shift.workHours}</td>` : ''}
+                <td class="pdf-off-cell">${isOff ? '<span class="pdf-off-label">Folga</span>' : ''}</td>
+            </tr>
+        `;
+    }).join('')).join('');
+
+    return `
+        <table class="pdf-shift-table">
+            <thead><tr><th>Nome</th><th>Horário</th><th>Folga</th></tr></thead>
+            <tbody>${employeeRows}</tbody>
+        </table>
+    `;
 }
 
 function buildSchedulePDFMarkup(schedule) {
-    const sectorGroups = groupScheduleEmployeesBySectorAndShift(schedule.employees || []);
+    const scheduleEmployees = (schedule.employees || []).map(scheduleEmployee => {
+        const currentEmployee = scheduleEmployee.id == null
+            ? null
+            : employees.find(employee => String(employee.id) === String(scheduleEmployee.id));
+        return {
+            ...scheduleEmployee,
+            pdfRole: currentEmployee?.pdfRole || scheduleEmployee.pdfRole || 'employee',
+            pdfSector: currentEmployee?.sector || scheduleEmployee.sector || 'Sem setor'
+        };
+    });
+    const specialRoles = new Set(['leader', 'frontCashierFiscal']);
+    const regularEmployees = scheduleEmployees.filter(employee => !specialRoles.has(employee.pdfRole));
+    const leadersBySector = new Map();
+
+    scheduleEmployees.filter(employee => employee.pdfRole === 'leader').forEach(leader => {
+        if (!leadersBySector.has(leader.pdfSector)) leadersBySector.set(leader.pdfSector, []);
+        leadersBySector.get(leader.pdfSector).push(leader);
+    });
+
+    const configuredLeaderSectors = sectors.map(sector => sector.name).filter(name => leadersBySector.has(name));
+    const otherLeaderSectors = Array.from(leadersBySector.keys()).filter(name => !sectors.some(sector => sector.name === name));
+    const leaderSections = [...configuredLeaderSectors, ...otherLeaderSectors].map(sectorName => `
+        <section class="pdf-special-group">
+            <h3 class="pdf-special-group-title">Líderes — Setor ${sectorName}</h3>
+            ${renderPDFScheduleTable(leadersBySector.get(sectorName))}
+        </section>
+    `).join('');
+    const frontCashierFiscal = scheduleEmployees.filter(employee => employee.pdfRole === 'frontCashierFiscal');
     const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
 
     return `
@@ -648,24 +683,14 @@ function buildSchedulePDFMarkup(schedule) {
                 <div class="pdf-title">CRONOGRAMA DE ESCALA</div>
                 <div class="pdf-subtitle">${schedule.name} • ${scheduleDay}</div>
             </div>
-            <div class="pdf-section-title">Funcionários agrupados por setor e horário</div>
-            ${sectorGroups.length ? sectorGroups.map(sector => `
-                <section class="pdf-sector" style="--sector-color: ${sector.color}">
-                    <h3 class="pdf-sector-title">${sector.name}<span>(${sector.count})</span></h3>
-                    <table class="pdf-shift-table">
-                        <thead><tr><th>Horário</th><th>Funcionário(s)</th></tr></thead>
-                        <tbody>
-                            ${sector.shifts.map(shift => `
-                                <tr>
-                                    <td class="pdf-shift-time">${shift.workHours}</td>
-                                    <td class="pdf-worker-list">${renderPDFEmployeeEntries(shift.workers)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+            ${renderPDFScheduleTable(regularEmployees)}
+            ${leaderSections}
+            ${frontCashierFiscal.length ? `
+                <section class="pdf-special-group">
+                    <h3 class="pdf-special-group-title">Fiscal da Frente de Caixa</h3>
+                    ${renderPDFScheduleTable(frontCashierFiscal)}
                 </section>
-            `).join('') : '<p class="pdf-empty-state">Nenhum funcionário cadastrado neste cronograma.</p>'}
-            <div class="pdf-generated-at">Documento gerado em ${new Date().toLocaleString('pt-BR')} • Sistema de Gestão Fort Atacadista</div>
+            ` : ''}
         </div>
     `;
 }
@@ -680,69 +705,14 @@ function generatePDFPreview() {
 
 function downloadSchedulePDF() {
     const title = document.getElementById('viewScheduleTitle').textContent;
-    const schedule = schedules.find(s => s.name === title);
+    const schedule = schedules.find(item => item.name === title);
     if (!schedule) return;
 
     const capture = document.getElementById('pdfCaptureElement');
-    
-    // Organizar funcionários por setor para o PDF
-    const organized = {};
-    sectors.forEach(s => {
-        organized[s.name] = schedule.employees.filter(e => e.sector === s.name);
-    });
+    capture.innerHTML = buildSchedulePDFMarkup(schedule);
 
-    // Criar conteúdo visual rico para o PDF
-    capture.innerHTML = `
-        <div style="font-family: 'Inter', Arial, sans-serif; padding: 20px; color: #333;">
-            <div style="background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%); color: white; padding: 30px; text-align: center; border-radius: 12px; margin-bottom: 30px;">
-                <div style="background: white; color: #FF0000; padding: 10px 20px; border-radius: 8px; display: inline-block; font-weight: 800; font-size: 16px; margin-bottom: 15px;">
-                    🏪 FORT ATACADISTA
-                </div>
-                <h1 style="font-size: 24px; margin: 0;">CRONOGRAMA DE ESCALA</h1>
-                <p style="font-size: 16px; opacity: 0.9; margin-top: 5px;">${schedule.name} | ${schedule.dateText}</p>
-            </div>
-
-            ${Object.keys(organized).map(sectorName => {
-                const sectorEmployees = organized[sectorName];
-                if (sectorEmployees.length === 0) return '';
-                const sectorInfo = sectors.find(s => s.name === sectorName);
-                
-                return `
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 18px; color: #444; border-bottom: 3px solid ${sectorInfo.color}; padding-bottom: 5px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <span style="background: ${sectorInfo.color}; width: 12px; height: 12px; border-radius: 50%; display: inline-block;"></span>
-                            ${sectorName} (${sectorEmployees.length})
-                        </h2>
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                            ${sectorEmployees.map(e => `
-                                <div style="background: #fff; border: 1px solid #eee; border-left: 5px solid ${e.status === 'FOLGA' ? '#dc3545' : '#28a745'}; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                                    <div style="font-weight: 700; font-size: 15px; margin-bottom: 8px; color: #222;">
-                                        👤 ${e.name}
-                                    </div>
-                                    <div style="font-size: 13px; color: #666; margin-bottom: 5px;">
-                                        🕒 Horário: <strong>${e.schedule}</strong>
-                                    </div>
-                                    <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
-                                        📍 Setor: ${e.sector}
-                                    </div>
-                                    <div style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: ${e.status === 'FOLGA' ? '#fff1f0' : '#f6ffed'}; color: ${e.status === 'FOLGA' ? '#cf1322' : '#389e0d'}; border: 1px solid ${e.status === 'FOLGA' ? '#ffa39e' : '#b7eb8f'};">
-                                        ${e.status === 'FOLGA' ? '🏠 FOLGA' : '💼 TRABALHANDO'}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('')}
-            
-            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 11px;">
-                Documento gerado em ${new Date().toLocaleString('pt-BR')} | Sistema de Gestão Fort Atacadista
-            </div>
-        </div>
-    `;
-    
-    setTimeout(() => {
-        html2canvas(capture, { 
+    window.setTimeout(() => {
+        html2canvas(capture, {
             scale: 2,
             useCORS: true,
             logging: false,
@@ -750,28 +720,32 @@ function downloadSchedulePDF() {
         }).then(canvas => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = 210;
+            const imageData = canvas.toDataURL('image/png');
+            const pageWidth = 210;
             const pageHeight = 297;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight;
+            const imageHeight = (canvas.height * pageWidth) / canvas.width;
+            let remainingHeight = imageHeight;
             let position = 0;
 
-            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+            doc.addImage(imageData, 'PNG', 0, position, pageWidth, imageHeight);
+            remainingHeight -= pageHeight;
 
-            while (heightLeft >= 0) {
-                position = heightLeft - imgHeight;
+            while (remainingHeight > 0) {
+                position = remainingHeight - imageHeight;
                 doc.addPage();
-                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+                doc.addImage(imageData, 'PNG', 0, position, pageWidth, imageHeight);
+                remainingHeight -= pageHeight;
             }
 
             doc.save(`escala_${schedule.name.replace(/\s+/g, '_')}.pdf`);
-            showNotification('PDF com cards gerado!', 'success');
-            capture.innerHTML = ''; // Limpar após gerar
+            showNotification('PDF da escala gerado!', 'success');
+        }).catch(error => {
+            console.error('Erro ao gerar PDF:', error);
+            showNotification('Não foi possível gerar o PDF. Tente novamente.', 'error');
+        }).finally(() => {
+            capture.innerHTML = '';
         });
-    }, 500);
+    }, 100);
 }
 
 function showNotification(msg, type = 'info') {
