@@ -198,6 +198,14 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label class="form-label" for="employeePdfRole">Classificação no PDF</label>
+                    <select class="form-select" id="employeePdfRole">
+                        <option value="employee">Funcionário da escala</option>
+                        <option value="leader">Líder (separado por setor)</option>
+                        <option value="frontCashierFiscal">Fiscal da frente de caixa (separado)</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Horário de Trabalho</label>
                     <select class="form-select" id="employeeSchedule" required>
                         <option value="">Selecione um horário</option>
@@ -242,7 +250,7 @@
     <div id="editEmployeeOffDaysModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Editar Folgas do Funcionário</h2>
+                <h2 class="modal-title">Editar Folgas e Classificação no PDF</h2>
                 <button class="close-btn" onclick="closeModal('editEmployeeOffDaysModal')">&times;</button>
             </div>
             <form id="editEmployeeOffDaysForm">
@@ -267,9 +275,17 @@
                         <option value="D">Domingo D (Folga todos os domingos)</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label class="form-label" for="editEmployeePdfRole">Classificação no PDF</label>
+                    <select class="form-select" id="editEmployeePdfRole" required>
+                        <option value="employee">Funcionário da escala</option>
+                        <option value="leader">Líder (separado por setor)</option>
+                        <option value="frontCashierFiscal">Fiscal da frente de caixa (separado)</option>
+                    </select>
+                </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('editEmployeeOffDaysModal')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Folgas</button>
+                    <button type="submit" class="btn btn-primary">Salvar alterações</button>
                 </div>
             </form>
         </div>
