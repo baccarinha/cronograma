@@ -606,31 +606,76 @@ function togglePDFPreview() {
     }
 }
 
+function groupScheduleEmployeesBySectorAndShift(employeeList) {
+    const sectorGroups = new Map();
+
+    employeeList.forEach(employee => {
+        const sectorName = employee.sector || 'Sem setor';
+        const workHours = employee.schedule || 'Horário não informado';
+        if (!sectorGroups.has(sectorName)) sectorGroups.set(sectorName, new Map());
+
+        const shiftGroups = sectorGroups.get(sectorName);
+        if (!shiftGroups.has(workHours)) shiftGroups.set(workHours, []);
+        shiftGroups.get(workHours).push(employee);
+    });
+
+    const configuredSectors = sectors.map(sector => sector.name).filter(name => sectorGroups.has(name));
+    const otherSectors = Array.from(sectorGroups.keys()).filter(name => !sectors.some(sector => sector.name === name));
+
+    return [...configuredSectors, ...otherSectors].map(name => {
+        const sector = sectors.find(item => item.name === name);
+        const shifts = Array.from(sectorGroups.get(name), ([workHours, workers]) => ({ workHours, workers }));
+        const count = shifts.reduce((total, shift) => total + shift.workers.length, 0);
+        return { name, color: sector?.color || '#6c757d', count, shifts };
+    });
+}
+
+function renderPDFEmployeeEntries(workers) {
+    return workers.map(worker => {
+        const isOff = String(worker.status || '').toUpperCase() === 'FOLGA';
+        return `<span class="pdf-employee-entry">${worker.name}${isOff ? '<strong class="pdf-off-label">Folga</strong>' : ''}</span>`;
+    }).join('');
+}
+
+function buildSchedulePDFMarkup(schedule) {
+    const sectorGroups = groupScheduleEmployeesBySectorAndShift(schedule.employees || []);
+    const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
+
+    return `
+        <div class="pdf-document">
+            <div class="pdf-header">
+                <div class="pdf-logo"><i class="fas fa-store"></i> FORT ATACADISTA</div>
+                <div class="pdf-title">CRONOGRAMA DE ESCALA</div>
+                <div class="pdf-subtitle">${schedule.name} • ${scheduleDay}</div>
+            </div>
+            <div class="pdf-section-title">Funcionários agrupados por setor e horário</div>
+            ${sectorGroups.length ? sectorGroups.map(sector => `
+                <section class="pdf-sector" style="--sector-color: ${sector.color}">
+                    <h3 class="pdf-sector-title">${sector.name}<span>(${sector.count})</span></h3>
+                    <table class="pdf-shift-table">
+                        <thead><tr><th>Horário</th><th>Funcionário(s)</th></tr></thead>
+                        <tbody>
+                            ${sector.shifts.map(shift => `
+                                <tr>
+                                    <td class="pdf-shift-time">${shift.workHours}</td>
+                                    <td class="pdf-worker-list">${renderPDFEmployeeEntries(shift.workers)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </section>
+            `).join('') : '<p class="pdf-empty-state">Nenhum funcionário cadastrado neste cronograma.</p>'}
+            <div class="pdf-generated-at">Documento gerado em ${new Date().toLocaleString('pt-BR')} • Sistema de Gestão Fort Atacadista</div>
+        </div>
+    `;
+}
+
 function generatePDFPreview() {
     const title = document.getElementById('viewScheduleTitle').textContent;
     const schedule = schedules.find(s => s.name === title);
     if (!schedule) return;
 
-    const container = document.getElementById('pdfPreviewContainer');
-    container.innerHTML = `
-        <div class="pdf-header">
-            <div class="pdf-logo"><i class="fas fa-store"></i> FORT ATACADISTA</div>
-            <div class="pdf-title">ESCADA DE FRENTE DE CAIXA</div>
-            <div class="pdf-subtitle">${schedule.dateText}</div>
-        </div>
-        <div class="pdf-section">
-            <div class="pdf-section-title">${schedule.name}</div>
-            <div class="pdf-employee-grid">
-                ${schedule.employees.map(e => `
-                    <div class="pdf-employee-item">
-                        <div class="pdf-employee-name">${e.name}</div>
-                        <div class="pdf-employee-details">${e.sector} • ${e.schedule}</div>
-                        <div class="pdf-status-badge ${e.status === 'FOLGA' ? 'pdf-status-off' : 'pdf-status-working'}">${e.status}</div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
+    document.getElementById('pdfPreviewContainer').innerHTML = buildSchedulePDFMarkup(schedule);
 }
 
 function downloadSchedulePDF() {
