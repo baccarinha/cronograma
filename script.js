@@ -186,7 +186,7 @@ function renderEmployees() {
                 </div>
                 <div class="employee-detail">
                     <i class="fas fa-sun"></i>
-                    Ciclo Domingo: ${employee.sundayCycle || 'C'}
+                    Ciclo Domingo: ${employee.sundayCycle === 'D' ? 'D (folga todos os domingos)' : (employee.sundayCycle || 'C')}
                 </div>
             </div>
         </div>
@@ -224,7 +224,8 @@ function renderDashboardEmployees() {
             const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
             const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
             
-            if (employee.sundayCycle === 'A') isOffDay = isCycleASunday;
+            if (employee.sundayCycle === 'D') isOffDay = true;
+            else if (employee.sundayCycle === 'A') isOffDay = isCycleASunday;
             else if (employee.sundayCycle === 'B') isOffDay = !isCycleASunday;
             else isOffDay = false;
         }
@@ -355,7 +356,8 @@ function createSchedule(event) {
                 const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
                 const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
                 
-                if (emp.sundayCycle === 'A') isOffDay = isCycleASunday;
+                if (emp.sundayCycle === 'D') isOffDay = true;
+                else if (emp.sundayCycle === 'A') isOffDay = isCycleASunday;
                 else if (emp.sundayCycle === 'B') isOffDay = !isCycleASunday;
                 else isOffDay = false;
             }
