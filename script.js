@@ -12,6 +12,9 @@ let sectors = [
 let currentDate = new Date();
 let selectedDate = null;
 let pdfPreviewVisible = false;
+let internetClockTimestamp = null;
+let internetClockPerformance = null;
+let internetClockSyncInProgress = false;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
@@ -26,7 +29,80 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar data mínima para o calendário (hoje)
     selectedDate = new Date();
     selectedDate.setHours(0, 0, 0, 0);
+    startInternetClock();
 });
+
+// Relógio sincronizado pela internet (fuso horário de Brasília)
+function startInternetClock() {
+    updateInternetClockDisplay();
+    syncInternetClock();
+    window.setInterval(updateInternetClockDisplay, 1000);
+    window.setInterval(syncInternetClock, 60000);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) syncInternetClock();
+    });
+}
+
+async function syncInternetClock() {
+    if (internetClockSyncInProgress) return;
+    internetClockSyncInProgress = true;
+    const requestStarted = performance.now();
+    const requestController = new AbortController();
+    const requestTimeout = window.setTimeout(() => requestController.abort(), 8000);
+
+    try {
+        const response = await fetch('https://time.now/developer/api/timezone/America/Sao_Paulo', {
+            cache: 'no-store',
+            signal: requestController.signal
+        });
+        if (!response.ok) throw new Error(`Falha HTTP ${response.status}`);
+
+        const data = await response.json();
+        const responseReceived = performance.now();
+        const apiTimestamp = Date.parse(data.datetime) || Number(data.unixtime) * 1000;
+        if (!Number.isFinite(apiTimestamp)) throw new Error('A API retornou um horário inválido.');
+
+        // Compensa aproximadamente metade do tempo de ida e volta da requisição.
+        internetClockTimestamp = apiTimestamp + (responseReceived - requestStarted) / 2;
+        internetClockPerformance = responseReceived;
+        setInternetClockStatus('Horário de Brasília sincronizado pela internet', 'synced');
+        updateInternetClockDisplay();
+    } catch (error) {
+        const message = internetClockTimestamp === null
+            ? 'Sem conexão — usando o horário deste dispositivo'
+            : 'Sem nova conexão — usando a última sincronização';
+        setInternetClockStatus(message, 'offline');
+        updateInternetClockDisplay();
+    } finally {
+        window.clearTimeout(requestTimeout);
+        internetClockSyncInProgress = false;
+    }
+}
+
+function updateInternetClockDisplay() {
+    const timeElement = document.getElementById('currentDateTimeValue');
+    if (!timeElement) return;
+
+    const now = internetClockTimestamp === null
+        ? new Date()
+        : new Date(internetClockTimestamp + (performance.now() - internetClockPerformance));
+    const dateText = new Intl.DateTimeFormat('pt-BR', {
+        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo'
+    }).format(now);
+    const timeText = new Intl.DateTimeFormat('pt-BR', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23', timeZone: 'America/Sao_Paulo'
+    }).format(now);
+
+    timeElement.textContent = `${dateText} • ${timeText}`;
+    timeElement.dateTime = now.toISOString();
+}
+
+function setInternetClockStatus(message, state) {
+    const statusElement = document.getElementById('clockSyncStatus');
+    const dotElement = document.getElementById('clockSyncDot');
+    if (statusElement) statusElement.textContent = message;
+    if (dotElement) dotElement.className = `clock-sync-dot ${state}`;
+}
 
 // Funções de navegação
 function showTab(tabId) {
