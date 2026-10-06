@@ -83,7 +83,7 @@ function addEmployee(event) {
         sector,
         schedule,
         offDay,
-        sundayCycle,
+        sundayCycle: sundayCycle || 'C',
         status: 'Trabalhando' // Status padrão
     };
     
@@ -108,6 +108,40 @@ function deleteEmployee(id) {
     }
 }
 
+function openEditEmployeeOffDays(id) {
+    const employee = employees.find(emp => String(emp.id) === String(id));
+    if (!employee) return;
+
+    document.getElementById('editEmployeeId').value = employee.id;
+    // Registros antigos com sábado de folga passam para a opção permitida mais próxima.
+    document.getElementById('editEmployeeOffDay').value =
+        ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'nenhum'].includes(employee.offDay)
+            ? employee.offDay
+            : 'nenhum';
+    document.getElementById('editEmployeeSundayCycle').value = employee.sundayCycle || 'C';
+    showModal('editEmployeeOffDaysModal');
+}
+
+function updateEmployeeOffDays(event) {
+    event.preventDefault();
+
+    const employee = employees.find(emp => String(emp.id) === String(document.getElementById('editEmployeeId').value));
+    if (!employee) {
+        showNotification('Funcionário não encontrado.', 'error');
+        return;
+    }
+
+    employee.offDay = document.getElementById('editEmployeeOffDay').value;
+    employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
+
+    saveData();
+    renderEmployees();
+    renderDashboardEmployees();
+    updateStats();
+    closeModal('editEmployeeOffDaysModal');
+    showNotification('Folgas do funcionário atualizadas!', 'success');
+}
+
 function renderEmployees() {
     const container = document.getElementById('employeesList');
     if (!container) return;
@@ -128,9 +162,14 @@ function renderEmployees() {
             <div class="employee-name">
                 <i class="fas fa-user"></i>
                 ${employee.name}
-                <button onclick="deleteEmployee(${employee.id})" style="margin-left: auto; background: none; border: none; color: #dc3545; cursor: pointer;">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="employee-card-actions">
+                    <button class="employee-card-action" type="button" aria-label="Editar folgas de ${employee.name}" title="Editar folgas" onclick="openEditEmployeeOffDays(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
+                        <i class="fas fa-calendar-alt"></i>
+                    </button>
+                    <button class="employee-card-action delete" type="button" aria-label="Excluir ${employee.name}" title="Excluir funcionário" onclick="deleteEmployee(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
             <div class="employee-details">
                 <div class="employee-detail">
@@ -617,7 +656,7 @@ function showNotification(msg, type = 'info') {
 
 // Auxiliares
 function getOffDayName(day) {
-    const days = { 'segunda': 'Segunda', 'terca': 'Terça', 'quarta': 'Quarta', 'quinta': 'Quinta', 'sexta': 'Sexta', 'sabado': 'Sábado', 'nenhum': 'Nenhum' };
+    const days = { 'segunda': 'Segunda-feira', 'terca': 'Terça-feira', 'quarta': 'Quarta-feira', 'quinta': 'Quinta-feira', 'sexta': 'Sexta-feira', 'sabado': 'Sábado', 'nenhum': 'Nenhum dia de semana' };
     return days[day] || day;
 }
 
@@ -654,6 +693,7 @@ function loadData() {
 
 // Event Listeners
 document.getElementById('addEmployeeForm').addEventListener('submit', addEmployee);
+document.getElementById('editEmployeeOffDaysForm').addEventListener('submit', updateEmployeeOffDays);
 document.getElementById('createScheduleForm').addEventListener('submit', createSchedule);
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) closeModal(e.target.id);
