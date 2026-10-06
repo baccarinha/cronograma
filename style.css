@@ -1068,14 +1068,35 @@ body {
 }
 
 .pdf-shift-table th:first-child,
+.pdf-worker-name {
+    width: 55%;
+}
+
+.pdf-shift-table th:nth-child(2),
 .pdf-shift-time {
-    width: 130px;
+    width: 25%;
     white-space: nowrap;
+}
+
+.pdf-shift-table th:last-child,
+.pdf-off-cell {
+    width: 20%;
+    text-align: center;
 }
 
 .pdf-shift-time {
     color: #343a40;
     font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.pdf-worker-name {
+    font-weight: 600;
+}
+
+.pdf-off-cell {
+    vertical-align: middle;
 }
 
 .pdf-worker-list {
@@ -1100,6 +1121,20 @@ body {
     font-weight: 700;
     letter-spacing: 0.2px;
     text-transform: uppercase;
+}
+
+.pdf-special-group {
+    margin-top: 14px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.pdf-special-group-title {
+    margin: 0 0 6px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #6c757d;
+    color: #343a40;
+    font-size: 14px;
 }
 
 .pdf-empty-state {
