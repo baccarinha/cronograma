@@ -123,11 +123,11 @@
         <!-- Funcionários -->
         <div id="employees" class="tab-content">
             <div class="action-buttons">
-                <button class="btn btn-primary" onclick="showAddEmployeeModal()">
+                <button class="btn btn-primary" onclick="showAddEmployeeModal('mulher')">
                     <i class="fas fa-venus" aria-hidden="true"></i>
                     Adicionar Funcionário Mulher
                 </button>
-                <button class="btn btn-primary" onclick="showAddEmployeeModal()">
+                <button class="btn btn-primary" onclick="showAddEmployeeModal('homem')">
                     <i class="fas fa-mars" aria-hidden="true"></i>
                     Adicionar Funcionário Homem
                 </button>
@@ -175,15 +175,16 @@
 
     <!-- Modais -->
     <!-- Modal Adicionar Funcionário -->
-    <div id="addEmployeeModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Adicionar Funcionário</h2>
-                <button class="close-btn" onclick="closeModal('addEmployeeModal')">&times;</button>
-            </div>
-            <form id="addEmployeeForm">
-                <div class="form-group">
-                    <label class="form-label">Nome Completo</label>
+        <div id="addEmployeeModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="addEmployeeModalTitle">Adicionar Funcionário</h2>
+                    <button class="close-btn" onclick="closeModal('addEmployeeModal')">&times;</button>
+                </div>
+                <form id="addEmployeeForm">
+                    <input type="hidden" id="employeeGender" value="mulher">
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo</label>
                     <input type="text" class="form-input" id="employeeName" required>
                 </div>
                 <div class="form-group">
@@ -221,7 +222,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Ciclo de Folga de Domingo (2026)</label>
+                    <label class="form-label">Ciclo de Folga de Domingo (a partir de 2026)</label>
                     <select class="form-select" id="employeeSundayCycle">
                         <option value="">Selecione o ciclo</option>
                         <option value="A">Domingo A (Folga: 04/01, 18/01, 01/02...)</option>
