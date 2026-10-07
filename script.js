@@ -766,7 +766,7 @@ function buildSchedulePDFPages(schedule, capture) {
     let currentPage = createSchedulePDFPage(capture, schedule);
     let currentColumnIndex = 0;
     let currentColumn = currentPage.columns[currentColumnIndex];
-    let context = { sector: null, workHours: null };
+    let context = { sector: null, workHours: null, subgroup: null };
 
     const advanceColumn = () => {
         if (currentColumnIndex === 0) {
@@ -776,10 +776,10 @@ function buildSchedulePDFPages(schedule, capture) {
             currentColumnIndex = 0;
         }
         currentColumn = currentPage.columns[currentColumnIndex];
-        context = { sector: null, workHours: null };
+        context = { sector: null, workHours: null, subgroup: null };
     };
 
-    const appendEmployee = (sectorName, workHours, employee) => {
+    const appendEmployee = (sectorName, workHours, subgroupKey, subgroupLabel, subgroupCount, employee) => {
         let placed = false;
 
         while (!placed) {
@@ -795,6 +795,7 @@ function buildSchedulePDFPages(schedule, capture) {
                 addedHeadings.push(sectorHeading);
                 context.sector = sectorName;
                 context.workHours = null;
+                context.subgroup = null;
             }
 
             if (context.workHours !== workHours) {
@@ -804,10 +805,20 @@ function buildSchedulePDFPages(schedule, capture) {
                 currentColumn.appendChild(shiftHeading);
                 addedHeadings.push(shiftHeading);
                 context.workHours = workHours;
+                context.subgroup = null;
+            }
+
+            if (context.subgroup !== subgroupKey) {
+                const subgroupHeading = document.createElement('h5');
+                subgroupHeading.className = `pdf-status-subtitle ${subgroupKey === 'off' ? 'pdf-status-off-subtitle' : 'pdf-status-working-subtitle'}`;
+                subgroupHeading.textContent = `${subgroupLabel} — ${subgroupCount} ${subgroupCount === 1 ? 'funcionário' : 'funcionários'}`;
+                currentColumn.appendChild(subgroupHeading);
+                addedHeadings.push(subgroupHeading);
+                context.subgroup = subgroupKey;
             }
 
             const employeeName = document.createElement('div');
-            employeeName.className = 'pdf-worker-name';
+            employeeName.className = `pdf-worker-name ${subgroupKey === 'off' ? 'pdf-worker-off' : ''}`;
             employeeName.textContent = employee.name || 'Nome não informado';
             currentColumn.appendChild(employeeName);
 
@@ -823,9 +834,22 @@ function buildSchedulePDFPages(schedule, capture) {
         }
     };
 
+    const isEmployeeOff = employee => String(employee.status || '').trim().toUpperCase().startsWith('FOLGA');
+    const compareEmployeesAlphabetically = (first, second) =>
+        String(first.name || '').localeCompare(String(second.name || ''), 'pt-BR', { sensitivity: 'base' });
+
     sectorGroups.forEach(group => {
         groupScheduleEmployeesByShift(group.employees).forEach(shift => {
-            shift.workers.forEach(employee => appendEmployee(group.name, shift.workHours, employee));
+            const alphabeticalWorkers = [...shift.workers].sort(compareEmployeesAlphabetically);
+            const workingEmployees = alphabeticalWorkers.filter(employee => !isEmployeeOff(employee));
+            const offEmployees = alphabeticalWorkers.filter(isEmployeeOff);
+
+            workingEmployees.forEach(employee => appendEmployee(
+                group.name, shift.workHours, 'working', 'Trabalhando', workingEmployees.length, employee
+            ));
+            offEmployees.forEach(employee => appendEmployee(
+                group.name, shift.workHours, 'off', 'Folga', offEmployees.length, employee
+            ));
         });
     });
 
