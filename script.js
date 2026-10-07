@@ -701,53 +701,57 @@ function groupScheduleEmployeesBySector(employeeList) {
     return [...configuredSectors, ...otherSectors].map(name => ({ name, employees: sectorGroups.get(name) }));
 }
 
-function renderPDFScheduleTable(employeeList) {
-    if (!employeeList.length) return '';
+function createSchedulePDFPage(capture, schedule) {
+    const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
+    const page = document.createElement('div');
+    page.className = 'pdf-page';
 
-    const shiftGroups = groupScheduleEmployeesByShift(employeeList);
-    const shiftRows = shiftGroups.map(shift => {
-        const employeeRows = [];
-        const splitIndex = Math.ceil(shift.workers.length / 2);
-        const firstColumn = shift.workers.slice(0, splitIndex);
-        const secondColumn = shift.workers.slice(splitIndex);
+    const header = document.createElement('div');
+    header.className = 'pdf-header';
+    const logo = document.createElement('div');
+    logo.className = 'pdf-logo';
+    const logoIcon = document.createElement('i');
+    logoIcon.className = 'fas fa-store';
+    logo.append(logoIcon, document.createTextNode(' FORT ATACADISTA'));
+    const title = document.createElement('div');
+    title.className = 'pdf-title';
+    title.textContent = 'CRONOGRAMA DE ESCALA';
+    const subtitle = document.createElement('div');
+    subtitle.className = 'pdf-subtitle';
+    subtitle.textContent = [schedule.name, scheduleDay].filter(Boolean).join(' • ');
+    header.append(logo, title, subtitle);
 
-        for (let index = 0; index < firstColumn.length; index++) {
-            const leftEmployee = firstColumn[index];
-            const rightEmployee = secondColumn[index];
-            employeeRows.push(`
-                <tr>
-                    <td class="pdf-worker-name">${leftEmployee.name}</td>
-                    <td class="pdf-worker-name">${rightEmployee ? rightEmployee.name : ''}</td>
-                </tr>
-            `);
-        }
+    const columnsContainer = document.createElement('div');
+    columnsContainer.className = 'pdf-page-columns';
+    const columns = [0, 1].map(() => {
+        const column = document.createElement('div');
+        column.className = 'pdf-page-column';
+        columnsContainer.appendChild(column);
+        return column;
+    });
 
-        return `
-            <tr class="pdf-shift-heading-row">
-                <th colspan="2">Horário de trabalho: ${shift.workHours}</th>
-            </tr>
-            ${employeeRows.join('')}
-        `;
-    }).join('');
+    page.append(header, columnsContainer);
+    capture.appendChild(page);
+    void page.offsetHeight;
 
-    return `
-        <table class="pdf-shift-table">
-            <thead><tr><th>Funcionário</th><th>Funcionário</th></tr></thead>
-            <tbody>${shiftRows}</tbody>
-        </table>
-    `;
+    if (!columns[0].clientHeight) {
+        throw new Error('Não foi possível calcular a área imprimível do PDF.');
+    }
+
+    return { element: page, columns };
 }
 
-function renderPDFSectorSections(employeeList, getTitle) {
-    return groupScheduleEmployeesBySector(employeeList).map(group => `
-        <section class="pdf-special-group">
-            <h3 class="pdf-special-group-title">${getTitle(group.name)}</h3>
-            ${renderPDFScheduleTable(group.employees)}
-        </section>
-    `).join('');
-}
+function buildSchedulePDFPages(schedule, capture) {
+    capture.replaceChildren();
+    Object.assign(capture.style, {
+        width: '800px',
+        height: 'auto',
+        padding: '0',
+        boxSizing: 'border-box',
+        background: 'transparent',
+        display: 'block'
+    });
 
-function buildSchedulePDFMarkup(schedule) {
     const scheduleEmployees = (schedule.employees || []).map(scheduleEmployee => {
         const currentEmployee = scheduleEmployee.id == null
             ? null
@@ -757,72 +761,131 @@ function buildSchedulePDFMarkup(schedule) {
             pdfSector: currentEmployee?.sector || scheduleEmployee.sector || 'Sem setor'
         };
     });
-    const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
-    const sectorSections = renderPDFSectorSections(scheduleEmployees, sectorName => `Setor ${sectorName}`);
+    const sectorGroups = groupScheduleEmployeesBySector(scheduleEmployees);
 
-    return `
-        <div class="pdf-document">
-            <div class="pdf-header">
-                <div class="pdf-logo"><i class="fas fa-store"></i> FORT ATACADISTA</div>
-                <div class="pdf-title">CRONOGRAMA DE ESCALA</div>
-                <div class="pdf-subtitle">${schedule.name} • ${scheduleDay}</div>
-            </div>
-            ${sectorSections}
-        </div>
-    `;
+    let currentPage = createSchedulePDFPage(capture, schedule);
+    let currentColumnIndex = 0;
+    let currentColumn = currentPage.columns[currentColumnIndex];
+    let context = { sector: null, workHours: null };
+
+    const advanceColumn = () => {
+        if (currentColumnIndex === 0) {
+            currentColumnIndex = 1;
+        } else {
+            currentPage = createSchedulePDFPage(capture, schedule);
+            currentColumnIndex = 0;
+        }
+        currentColumn = currentPage.columns[currentColumnIndex];
+        context = { sector: null, workHours: null };
+    };
+
+    const appendEmployee = (sectorName, workHours, employee) => {
+        let placed = false;
+
+        while (!placed) {
+            const columnWasEmpty = currentColumn.childElementCount === 0;
+            const previousContext = { ...context };
+            const addedHeadings = [];
+
+            if (context.sector !== sectorName) {
+                const sectorHeading = document.createElement('h3');
+                sectorHeading.className = 'pdf-special-group-title';
+                sectorHeading.textContent = `Setor ${sectorName}`;
+                currentColumn.appendChild(sectorHeading);
+                addedHeadings.push(sectorHeading);
+                context.sector = sectorName;
+                context.workHours = null;
+            }
+
+            if (context.workHours !== workHours) {
+                const shiftHeading = document.createElement('h4');
+                shiftHeading.className = 'pdf-shift-subtitle';
+                shiftHeading.textContent = `Horário de trabalho: ${workHours}`;
+                currentColumn.appendChild(shiftHeading);
+                addedHeadings.push(shiftHeading);
+                context.workHours = workHours;
+            }
+
+            const employeeName = document.createElement('div');
+            employeeName.className = 'pdf-worker-name';
+            employeeName.textContent = employee.name || 'Nome não informado';
+            currentColumn.appendChild(employeeName);
+
+            if (columnWasEmpty || currentColumn.scrollHeight <= currentColumn.clientHeight) {
+                placed = true;
+                continue;
+            }
+
+            employeeName.remove();
+            addedHeadings.reverse().forEach(heading => heading.remove());
+            context = previousContext;
+            advanceColumn();
+        }
+    };
+
+    sectorGroups.forEach(group => {
+        groupScheduleEmployeesByShift(group.employees).forEach(shift => {
+            shift.workers.forEach(employee => appendEmployee(group.name, shift.workHours, employee));
+        });
+    });
+
+    if (!scheduleEmployees.length) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'pdf-empty-state';
+        emptyState.textContent = 'Nenhum funcionário nesta escala.';
+        currentColumn.appendChild(emptyState);
+    }
+
+    return Array.from(capture.querySelectorAll('.pdf-page'));
 }
 
 function generatePDFPreview() {
-    const title = document.getElementById('viewScheduleTitle').textContent;
-    const schedule = schedules.find(s => s.name === title);
-    if (!schedule) return;
-
-    document.getElementById('pdfPreviewContainer').innerHTML = buildSchedulePDFMarkup(schedule);
-}
-
-function downloadSchedulePDF() {
     const title = document.getElementById('viewScheduleTitle').textContent;
     const schedule = schedules.find(item => item.name === title);
     if (!schedule) return;
 
     const capture = document.getElementById('pdfCaptureElement');
-    capture.innerHTML = buildSchedulePDFMarkup(schedule);
+    const preview = document.getElementById('pdfPreviewContainer');
+    try {
+        const pages = buildSchedulePDFPages(schedule, capture);
+        preview.replaceChildren(...pages.map(page => page.cloneNode(true)));
+    } finally {
+        capture.replaceChildren();
+    }
+}
 
-    window.setTimeout(() => {
-        html2canvas(capture, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-        }).then(canvas => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const imageData = canvas.toDataURL('image/png');
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const imageHeight = (canvas.height * pageWidth) / canvas.width;
-            let remainingHeight = imageHeight;
-            let position = 0;
+async function downloadSchedulePDF() {
+    const title = document.getElementById('viewScheduleTitle').textContent;
+    const schedule = schedules.find(item => item.name === title);
+    if (!schedule) return;
 
-            doc.addImage(imageData, 'PNG', 0, position, pageWidth, imageHeight);
-            remainingHeight -= pageHeight;
+    const capture = document.getElementById('pdfCaptureElement');
+    try {
+        const pages = buildSchedulePDFPages(schedule, capture);
+        await new Promise(resolve => window.setTimeout(resolve, 100));
 
-            while (remainingHeight > 0) {
-                position = remainingHeight - imageHeight;
-                doc.addPage();
-                doc.addImage(imageData, 'PNG', 0, position, pageWidth, imageHeight);
-                remainingHeight -= pageHeight;
-            }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        for (let index = 0; index < pages.length; index++) {
+            const canvas = await html2canvas(pages[index], {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            });
+            if (index > 0) doc.addPage();
+            const imageData = canvas.toDataURL('image/jpeg', 0.94);
+            doc.addImage(imageData, 'JPEG', 0, 0, 210, 297);
+        }
 
-            doc.save(`escala_${schedule.name.replace(/\s+/g, '_')}.pdf`);
-            showNotification('PDF da escala gerado!', 'success');
-        }).catch(error => {
-            console.error('Erro ao gerar PDF:', error);
-            showNotification('Não foi possível gerar o PDF. Tente novamente.', 'error');
-        }).finally(() => {
-            capture.innerHTML = '';
-        });
-    }, 100);
+        doc.save(`escala_${schedule.name.replace(/\s+/g, '_')}.pdf`);
+        showNotification('PDF da escala gerado!', 'success');
+    } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        showNotification('Não foi possível gerar o PDF. Tente novamente.', 'error');
+    } finally {
+        capture.replaceChildren();
+    }
 }
 
 function showNotification(msg, type = 'info') {
