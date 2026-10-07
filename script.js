@@ -147,7 +147,6 @@ function addEmployee(event) {
     const schedule = document.getElementById('employeeSchedule').value;
     const offDay = document.getElementById('employeeOffDay').value;
     const sundayCycle = document.getElementById('employeeSundayCycle').value;
-    const pdfRole = document.getElementById('employeePdfRole').value || 'employee';
     
     if (!name || !sector || !schedule || !offDay) {
         showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
@@ -158,7 +157,6 @@ function addEmployee(event) {
         id: Date.now(),
         name,
         sector,
-        pdfRole,
         schedule,
         offDay,
         sundayCycle: sundayCycle || 'C',
@@ -202,7 +200,6 @@ function openEditEmployeeOffDays(id) {
             ? employee.offDay
             : 'nenhum';
     document.getElementById('editEmployeeSundayCycle').value = employee.sundayCycle || 'C';
-    document.getElementById('editEmployeePdfRole').value = employee.pdfRole || 'employee';
     showModal('editEmployeeOffDaysModal');
 }
 
@@ -224,7 +221,6 @@ function updateEmployeeOffDays(event) {
     employee.name = name;
     employee.offDay = document.getElementById('editEmployeeOffDay').value;
     employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
-    employee.pdfRole = document.getElementById('editEmployeePdfRole').value || 'employee';
 
     saveData();
     renderEmployees();
@@ -704,20 +700,16 @@ function renderPDFScheduleTable(employeeList) {
     if (!employeeList.length) return '';
 
     const shiftGroups = groupScheduleEmployeesByShift(employeeList);
-    const employeeRows = shiftGroups.map(shift => shift.workers.map((worker, index) => {
-        const isOff = String(worker.status || '').toUpperCase() === 'FOLGA';
-        return `
+    const employeeRows = shiftGroups.map(shift => shift.workers.map((worker, index) => `
             <tr>
                 <td class="pdf-worker-name">${worker.name}</td>
                 ${index === 0 ? `<td class="pdf-shift-time" rowspan="${shift.workers.length}">${shift.workHours}</td>` : ''}
-                <td class="pdf-off-cell">${isOff ? '<span class="pdf-off-label">Folga</span>' : ''}</td>
             </tr>
-        `;
-    }).join('')).join('');
+        `).join('')).join('');
 
     return `
         <table class="pdf-shift-table">
-            <thead><tr><th>Nome</th><th>Horário</th><th>Folga</th></tr></thead>
+            <thead><tr><th>Funcionário</th><th>Horário de trabalho</th></tr></thead>
             <tbody>${employeeRows}</tbody>
         </table>
     `;
@@ -739,18 +731,11 @@ function buildSchedulePDFMarkup(schedule) {
             : employees.find(employee => String(employee.id) === String(scheduleEmployee.id));
         return {
             ...scheduleEmployee,
-            pdfRole: currentEmployee?.pdfRole || scheduleEmployee.pdfRole || 'employee',
             pdfSector: currentEmployee?.sector || scheduleEmployee.sector || 'Sem setor'
         };
     });
-    const specialRoles = new Set(['leader', 'frontCashierFiscal']);
-    const regularEmployees = scheduleEmployees.filter(employee => !specialRoles.has(employee.pdfRole));
-    const leaders = scheduleEmployees.filter(employee => employee.pdfRole === 'leader');
-    const frontCashierFiscal = scheduleEmployees.filter(employee => employee.pdfRole === 'frontCashierFiscal');
     const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
-    const regularSections = renderPDFSectorSections(regularEmployees, sectorName => `Setor ${sectorName}`);
-    const leaderSections = renderPDFSectorSections(leaders, sectorName => `Líderes — Setor ${sectorName}`);
-    const fiscalSections = renderPDFSectorSections(frontCashierFiscal, sectorName => `Fiscal da Frente de Caixa — Setor ${sectorName}`);
+    const sectorSections = renderPDFSectorSections(scheduleEmployees, sectorName => `Setor ${sectorName}`);
 
     return `
         <div class="pdf-document">
@@ -759,9 +744,7 @@ function buildSchedulePDFMarkup(schedule) {
                 <div class="pdf-title">CRONOGRAMA DE ESCALA</div>
                 <div class="pdf-subtitle">${schedule.name} • ${scheduleDay}</div>
             </div>
-            ${regularSections}
-            ${leaderSections}
-            ${fiscalSections}
+            ${sectorSections}
         </div>
     `;
 }
