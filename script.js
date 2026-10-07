@@ -296,11 +296,36 @@ function updateEmployeeOffDays(event) {
     showNotification('Funcionário atualizado!', 'success');
 }
 
+function getFilteredEmployees(inputId) {
+    const searchInput = document.getElementById(inputId);
+    const query = String(searchInput ? searchInput.value : '').trim().toLocaleLowerCase('pt-BR');
+    const filteredEmployees = query
+        ? employees.filter(employee => String(employee.name || '').toLocaleLowerCase('pt-BR').includes(query))
+        : employees;
+    return { filteredEmployees, query };
+}
+
+function filterEmployees(inputId = 'employeeSearch') {
+    if (inputId === 'dashboardSearch') renderDashboardEmployees();
+    else renderEmployees();
+}
+
 function renderEmployees() {
     const container = document.getElementById('employeesList');
     if (!container) return;
-    
-    if (employees.length === 0) {
+
+    const { filteredEmployees, query } = getFilteredEmployees('employeeSearch');
+    if (filteredEmployees.length === 0) {
+        if (query) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhum funcionário encontrado</h3>
+                    <p>Confira o nome e os acentos e tente novamente.</p>
+                </div>
+            `;
+            return;
+        }
         container.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-user-plus"></i>
@@ -311,7 +336,7 @@ function renderEmployees() {
         return;
     }
     
-    container.innerHTML = employees.map(employee => `
+    container.innerHTML = filteredEmployees.map(employee => `
         <div class="employee-card">
             <div class="employee-name">
                 <i class="fas fa-user"></i>
@@ -351,8 +376,19 @@ function renderEmployees() {
 function renderDashboardEmployees() {
     const container = document.getElementById('dashboardEmployees');
     if (!container) return;
-    
-    if (employees.length === 0) {
+
+    const { filteredEmployees, query } = getFilteredEmployees('dashboardSearch');
+    if (filteredEmployees.length === 0) {
+        if (query) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhum funcionário encontrado</h3>
+                    <p>Confira o nome e os acentos e tente novamente.</p>
+                </div>
+            `;
+            return;
+        }
         container.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-users"></i>
@@ -363,7 +399,7 @@ function renderDashboardEmployees() {
         return;
     }
     
-    container.innerHTML = employees.map(employee => {
+    container.innerHTML = filteredEmployees.map(employee => {
         const today = new Date();
         const isOffDay = getEmployeeStatusForDate(employee, today) === 'FOLGA';
         
