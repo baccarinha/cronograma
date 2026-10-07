@@ -1067,22 +1067,11 @@ body {
     font-weight: 700;
 }
 
-.pdf-shift-table th:first-child,
-.pdf-worker-name {
-    width: 60%;
-}
-
-.pdf-shift-table th:nth-child(2),
-.pdf-shift-time {
-    width: 40%;
-    white-space: nowrap;
-}
-
-.pdf-shift-time {
-    color: #343a40;
-    font-weight: 600;
-    text-align: center;
-    vertical-align: middle;
+.pdf-shift-heading-row th {
+    padding-top: 7px;
+    background: #fff;
+    color: #6c757d;
+    font-size: 10px;
 }
 
 .pdf-worker-name {
