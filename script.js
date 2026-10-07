@@ -129,7 +129,65 @@ function closeModal(modalId) {
     }
 }
 
-function showAddEmployeeModal() {
+function getSundayCycleOptions(gender) {
+    if (gender === 'homem') {
+        return [
+            { value: 'A', label: 'Domingo A (folga no 1º domingo de cada mês, a partir de 04/01/2026)' },
+            { value: 'B', label: 'Domingo B (folga no 2º domingo de cada mês, a partir de 11/01/2026)' },
+            { value: 'C', label: 'Domingo C (folga no 3º domingo de cada mês, a partir de 18/01/2026)' },
+            { value: 'D', label: 'Domingo D (trabalha todos os domingos)' },
+            { value: 'E', label: 'Domingo E (folga todos os domingos)' }
+        ];
+    }
+
+    return [
+        { value: 'A', label: 'Domingo A (Folga: 04/01, 18/01, 01/02...)' },
+        { value: 'B', label: 'Domingo B (Folga: 11/01, 25/01, 08/02...)' },
+        { value: 'C', label: 'Domingo C (Trabalha todos os domingos)' },
+        { value: 'D', label: 'Domingo D (Folga todos os domingos)' }
+    ];
+}
+
+function populateSundayCycleOptions(selectElement, gender, selectedCycle, includePlaceholder = false) {
+    const options = getSundayCycleOptions(gender);
+    const placeholder = includePlaceholder ? '<option value="">Selecione o ciclo</option>' : '';
+    selectElement.innerHTML = placeholder + options
+        .map(option => `<option value="${option.value}">${option.label}</option>`)
+        .join('');
+
+    const defaultCycle = gender === 'homem' ? 'D' : 'C';
+    selectElement.value = options.some(option => option.value === selectedCycle)
+        ? selectedCycle
+        : defaultCycle;
+}
+
+function getSundayCycleDescription(employee) {
+    const isMan = employee.gender === 'homem';
+    const cycle = employee.sundayCycle || (isMan ? 'D' : 'C');
+    if (isMan) {
+        const descriptions = {
+            A: 'A (folga no 1º domingo do mês)',
+            B: 'B (folga no 2º domingo do mês)',
+            C: 'C (folga no 3º domingo do mês)',
+            D: 'D (trabalha todos os domingos)',
+            E: 'E (folga todos os domingos)'
+        };
+        return descriptions[cycle] || cycle;
+    }
+    return cycle === 'D' ? 'D (folga todos os domingos)' : cycle;
+}
+
+function showAddEmployeeModal(gender = 'mulher') {
+    const selectedGender = gender === 'homem' ? 'homem' : 'mulher';
+    document.getElementById('employeeGender').value = selectedGender;
+    document.getElementById('addEmployeeModalTitle').textContent =
+        `Adicionar Funcionário ${selectedGender === 'homem' ? 'Homem' : 'Mulher'}`;
+    populateSundayCycleOptions(
+        document.getElementById('employeeSundayCycle'),
+        selectedGender,
+        selectedGender === 'homem' ? 'D' : 'C',
+        true
+    );
     showModal('addEmployeeModal');
 }
 
@@ -147,6 +205,7 @@ function addEmployee(event) {
     const schedule = document.getElementById('employeeSchedule').value;
     const offDay = document.getElementById('employeeOffDay').value;
     const sundayCycle = document.getElementById('employeeSundayCycle').value;
+    const gender = document.getElementById('employeeGender').value === 'homem' ? 'homem' : 'mulher';
     
     if (!name || !sector || !schedule || !offDay) {
         showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
@@ -159,7 +218,8 @@ function addEmployee(event) {
         sector,
         schedule,
         offDay,
-        sundayCycle: sundayCycle || 'C',
+        gender,
+        sundayCycle: sundayCycle || (gender === 'homem' ? 'D' : 'C'),
         status: 'Trabalhando' // Status padrão
     };
     
@@ -199,7 +259,13 @@ function openEditEmployeeOffDays(id) {
         ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'nenhum'].includes(employee.offDay)
             ? employee.offDay
             : 'nenhum';
-    document.getElementById('editEmployeeSundayCycle').value = employee.sundayCycle || 'C';
+    const gender = employee.gender === 'homem' ? 'homem' : 'mulher';
+    const defaultCycle = gender === 'homem' ? 'D' : 'C';
+    populateSundayCycleOptions(
+        document.getElementById('editEmployeeSundayCycle'),
+        gender,
+        employee.sundayCycle || defaultCycle
+    );
     showModal('editEmployeeOffDaysModal');
 }
 
@@ -275,7 +341,7 @@ function renderEmployees() {
                 </div>
                 <div class="employee-detail">
                     <i class="fas fa-sun"></i>
-                    Ciclo Domingo: ${employee.sundayCycle === 'D' ? 'D (folga todos os domingos)' : (employee.sundayCycle || 'C')}
+                    Ciclo Domingo: ${getSundayCycleDescription(employee)}
                 </div>
             </div>
         </div>
@@ -298,26 +364,8 @@ function renderDashboardEmployees() {
     }
     
     container.innerHTML = employees.map(employee => {
-        // Lógica simplificada para o dashboard (quem trabalha hoje)
         const today = new Date();
-        const dayOfWeek = today.getDay();
-        const dayNames = {
-            0: 'domingo', 1: 'segunda', 2: 'terca', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sabado'
-        };
-        
-        let isOffDay = employee.offDay === dayNames[dayOfWeek];
-        
-        if (dayOfWeek === 0) {
-            const referenceDate = new Date(2026, 0, 4);
-            const diffTime = today.getTime() - referenceDate.getTime();
-            const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
-            const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
-            
-            if (employee.sundayCycle === 'D') isOffDay = true;
-            else if (employee.sundayCycle === 'A') isOffDay = isCycleASunday;
-            else if (employee.sundayCycle === 'B') isOffDay = !isCycleASunday;
-            else isOffDay = false;
-        }
+        const isOffDay = getEmployeeStatusForDate(employee, today) === 'FOLGA';
         
         const status = isOffDay ? 'FOLGA' : 'Trabalhando';
         
@@ -424,17 +472,34 @@ function getEmployeeStatusForDate(employee, date) {
 
     let isOffDay = employee.offDay === dayNames[dayOfWeek];
     if (dayOfWeek === 0) {
-        const referenceDate = new Date(2026, 0, 4);
-        const diffWeeks = Math.floor((scheduleDate.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
-        const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
-
-        if (employee.sundayCycle === 'D') isOffDay = true;
-        else if (employee.sundayCycle === 'A') isOffDay = isCycleASunday;
-        else if (employee.sundayCycle === 'B') isOffDay = !isCycleASunday;
-        else isOffDay = false;
+        isOffDay = isEmployeeOffOnSunday(employee, scheduleDate);
     }
 
     return isOffDay ? 'FOLGA' : 'Trabalhando';
+}
+
+function isEmployeeOffOnSunday(employee, sundayDate) {
+    const isMan = employee.gender === 'homem';
+    const cycle = employee.sundayCycle || (isMan ? 'D' : 'C');
+
+    if (isMan) {
+        if (cycle === 'D') return false;
+        if (cycle === 'E') return true;
+
+        const sundayOfMonth = Math.floor((sundayDate.getDate() - 1) / 7) + 1;
+        const cycleSunday = { A: 1, B: 2, C: 3 }[cycle];
+        return cycleSunday === sundayOfMonth;
+    }
+
+    if (cycle === 'D') return true;
+    if (cycle === 'A' || cycle === 'B') {
+        const referenceDate = new Date(2026, 0, 4);
+        const diffWeeks = Math.floor((sundayDate.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
+        const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
+        return cycle === 'A' ? isCycleASunday : !isCycleASunday;
+    }
+
+    return false;
 }
 
 function buildScheduleEmployeesForDate(scheduleDate) {
