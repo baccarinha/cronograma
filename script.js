@@ -679,7 +679,12 @@ function groupScheduleEmployeesByShift(employeeList) {
         shiftGroups.get(workHours).push(employee);
     });
 
-    return Array.from(shiftGroups, ([workHours, workers]) => ({ workHours, workers }));
+    return Array.from(shiftGroups, ([workHours, workers]) => ({ workHours, workers })).sort((a, b) => {
+        const aUnknown = a.workHours === 'Horário não informado';
+        const bUnknown = b.workHours === 'Horário não informado';
+        if (aUnknown !== bUnknown) return aUnknown ? 1 : -1;
+        return a.workHours.localeCompare(b.workHours, 'pt-BR', { numeric: true });
+    });
 }
 
 function groupScheduleEmployeesBySector(employeeList) {
@@ -700,17 +705,31 @@ function renderPDFScheduleTable(employeeList) {
     if (!employeeList.length) return '';
 
     const shiftGroups = groupScheduleEmployeesByShift(employeeList);
-    const employeeRows = shiftGroups.map(shift => shift.workers.map((worker, index) => `
-            <tr>
-                <td class="pdf-worker-name">${worker.name}</td>
-                ${index === 0 ? `<td class="pdf-shift-time" rowspan="${shift.workers.length}">${shift.workHours}</td>` : ''}
+    const shiftRows = shiftGroups.map(shift => {
+        const employeeRows = [];
+        for (let index = 0; index < shift.workers.length; index += 2) {
+            const leftEmployee = shift.workers[index];
+            const rightEmployee = shift.workers[index + 1];
+            employeeRows.push(`
+                <tr>
+                    <td class="pdf-worker-name">${leftEmployee.name}</td>
+                    <td class="pdf-worker-name">${rightEmployee ? rightEmployee.name : ''}</td>
+                </tr>
+            `);
+        }
+
+        return `
+            <tr class="pdf-shift-heading-row">
+                <th colspan="2">Horário de trabalho: ${shift.workHours}</th>
             </tr>
-        `).join('')).join('');
+            ${employeeRows.join('')}
+        `;
+    }).join('');
 
     return `
         <table class="pdf-shift-table">
-            <thead><tr><th>Funcionário</th><th>Horário de trabalho</th></tr></thead>
-            <tbody>${employeeRows}</tbody>
+            <thead><tr><th>Funcionário</th><th>Funcionário</th></tr></thead>
+            <tbody>${shiftRows}</tbody>
         </table>
     `;
 }
