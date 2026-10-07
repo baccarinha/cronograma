@@ -707,9 +707,13 @@ function renderPDFScheduleTable(employeeList) {
     const shiftGroups = groupScheduleEmployeesByShift(employeeList);
     const shiftRows = shiftGroups.map(shift => {
         const employeeRows = [];
-        for (let index = 0; index < shift.workers.length; index += 2) {
-            const leftEmployee = shift.workers[index];
-            const rightEmployee = shift.workers[index + 1];
+        const splitIndex = Math.ceil(shift.workers.length / 2);
+        const firstColumn = shift.workers.slice(0, splitIndex);
+        const secondColumn = shift.workers.slice(splitIndex);
+
+        for (let index = 0; index < firstColumn.length; index++) {
+            const leftEmployee = firstColumn[index];
+            const rightEmployee = secondColumn[index];
             employeeRows.push(`
                 <tr>
                     <td class="pdf-worker-name">${leftEmployee.name}</td>
