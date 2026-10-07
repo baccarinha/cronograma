@@ -132,9 +132,9 @@ function closeModal(modalId) {
 function getSundayCycleOptions(gender) {
     if (gender === 'homem') {
         return [
-            { value: 'A', label: 'Domingo A (folga no 1º domingo de cada mês, a partir de 04/01/2026)' },
-            { value: 'B', label: 'Domingo B (folga no 2º domingo de cada mês, a partir de 11/01/2026)' },
-            { value: 'C', label: 'Domingo C (folga no 3º domingo de cada mês, a partir de 18/01/2026)' },
+            { value: 'A', label: 'Domingo A (sequência contínua: 04/01, 25/01, 15/02, 08/03...)' },
+            { value: 'B', label: 'Domingo B (sequência contínua: 11/01, 01/02, 22/02, 15/03...)' },
+            { value: 'C', label: 'Domingo C (sequência contínua: 18/01, 08/02, 01/03, 22/03...)' },
             { value: 'D', label: 'Domingo D (trabalha todos os domingos)' },
             { value: 'E', label: 'Domingo E (folga todos os domingos)' }
         ];
@@ -166,9 +166,9 @@ function getSundayCycleDescription(employee) {
     const cycle = employee.sundayCycle || (isMan ? 'D' : 'C');
     if (isMan) {
         const descriptions = {
-            A: 'A (folga no 1º domingo do mês)',
-            B: 'B (folga no 2º domingo do mês)',
-            C: 'C (folga no 3º domingo do mês)',
+            A: 'A (sequência contínua a partir de 04/01/2026)',
+            B: 'B (sequência contínua a partir de 11/01/2026)',
+            C: 'C (sequência contínua a partir de 18/01/2026)',
             D: 'D (trabalha todos os domingos)',
             E: 'E (folga todos os domingos)'
         };
@@ -486,9 +486,13 @@ function isEmployeeOffOnSunday(employee, sundayDate) {
         if (cycle === 'D') return false;
         if (cycle === 'E') return true;
 
-        const sundayOfMonth = Math.floor((sundayDate.getDate() - 1) / 7) + 1;
-        const cycleSunday = { A: 1, B: 2, C: 3 }[cycle];
-        return cycleSunday === sundayOfMonth;
+        // Ciclo contínuo iniciado no primeiro domingo de janeiro de 2026:
+        // A, B, C se repetem a cada três domingos, sem reiniciar no mês seguinte.
+        const referenceDate = new Date(2026, 0, 4);
+        const diffWeeks = Math.floor((sundayDate.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
+        const cyclePosition = ((diffWeeks % 3) + 3) % 3;
+        const cyclePositionByLetter = { A: 0, B: 1, C: 2 }[cycle];
+        return cyclePositionByLetter === cyclePosition;
     }
 
     if (cycle === 'D') return true;
