@@ -195,6 +195,7 @@ function openEditEmployeeOffDays(id) {
     if (!employee) return;
 
     document.getElementById('editEmployeeId').value = employee.id;
+    document.getElementById('editEmployeeName').value = employee.name;
     // Registros antigos com sábado de folga passam para a opção permitida mais próxima.
     document.getElementById('editEmployeeOffDay').value =
         ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'nenhum'].includes(employee.offDay)
@@ -214,6 +215,13 @@ function updateEmployeeOffDays(event) {
         return;
     }
 
+    const name = document.getElementById('editEmployeeName').value.trim();
+    if (!name) {
+        showNotification('Informe o nome do funcionário.', 'error');
+        return;
+    }
+
+    employee.name = name;
     employee.offDay = document.getElementById('editEmployeeOffDay').value;
     employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
     employee.pdfRole = document.getElementById('editEmployeePdfRole').value || 'employee';
@@ -223,7 +231,7 @@ function updateEmployeeOffDays(event) {
     renderDashboardEmployees();
     updateStats();
     closeModal('editEmployeeOffDaysModal');
-    showNotification('Folgas e classificação para o PDF atualizadas!', 'success');
+    showNotification('Funcionário atualizado!', 'success');
 }
 
 function renderEmployees() {
@@ -247,7 +255,7 @@ function renderEmployees() {
                 <i class="fas fa-user"></i>
                 ${employee.name}
                 <div class="employee-card-actions">
-                    <button class="employee-card-action" type="button" aria-label="Editar folgas e classificação no PDF de ${employee.name}" title="Editar folgas e classificação no PDF" onclick="openEditEmployeeOffDays(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
+                    <button class="employee-card-action" type="button" aria-label="Editar funcionário ${employee.name}" title="Editar funcionário" onclick="openEditEmployeeOffDays(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
                     <button class="employee-card-action delete employee-delete-button" type="button" aria-label="Excluir ${employee.name}" title="Excluir funcionário" onclick="deleteEmployee(decodeURIComponent('${encodeURIComponent(String(employee.id))}'))">
@@ -410,6 +418,36 @@ document.getElementById('editSectorForm').addEventListener('submit', function(ev
 });
 
 // Funções de cronograma
+function getEmployeeStatusForDate(employee, date) {
+    const scheduleDate = new Date(date);
+    scheduleDate.setHours(0, 0, 0, 0);
+    const dayOfWeek = scheduleDate.getDay();
+    const dayNames = {
+        0: 'domingo', 1: 'segunda', 2: 'terca', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sabado'
+    };
+
+    let isOffDay = employee.offDay === dayNames[dayOfWeek];
+    if (dayOfWeek === 0) {
+        const referenceDate = new Date(2026, 0, 4);
+        const diffWeeks = Math.floor((scheduleDate.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
+        const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
+
+        if (employee.sundayCycle === 'D') isOffDay = true;
+        else if (employee.sundayCycle === 'A') isOffDay = isCycleASunday;
+        else if (employee.sundayCycle === 'B') isOffDay = !isCycleASunday;
+        else isOffDay = false;
+    }
+
+    return isOffDay ? 'FOLGA' : 'Trabalhando';
+}
+
+function buildScheduleEmployeesForDate(scheduleDate) {
+    return employees.map(employee => ({
+        ...employee,
+        status: getEmployeeStatusForDate(employee, scheduleDate)
+    }));
+}
+
 function createSchedule(event) {
     event.preventDefault();
     
@@ -427,28 +465,7 @@ function createSchedule(event) {
         date: scheduleDate.toISOString(),
         dateText: scheduleDate.toLocaleDateString('pt-BR'),
         dayText: scheduleDate.toLocaleDateString('pt-BR', { weekday: 'long' }),
-        employees: employees.map(emp => {
-            const dayOfWeek = scheduleDate.getDay();
-            const dayNames = {
-                0: 'domingo', 1: 'segunda', 2: 'terca', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sabado'
-            };
-            
-            let isOffDay = emp.offDay === dayNames[dayOfWeek];
-            
-            if (dayOfWeek === 0) {
-                const referenceDate = new Date(2026, 0, 4);
-                const diffTime = scheduleDate.getTime() - referenceDate.getTime();
-                const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
-                const isCycleASunday = Math.abs(diffWeeks) % 2 === 0;
-                
-                if (emp.sundayCycle === 'D') isOffDay = true;
-                else if (emp.sundayCycle === 'A') isOffDay = isCycleASunday;
-                else if (emp.sundayCycle === 'B') isOffDay = !isCycleASunday;
-                else isOffDay = false;
-            }
-            
-            return { ...emp, status: isOffDay ? 'FOLGA' : 'Trabalhando' };
-        }),
+        employees: buildScheduleEmployeesForDate(scheduleDate),
         createdAt: new Date().toISOString()
     };
     
@@ -458,6 +475,52 @@ function createSchedule(event) {
     updateStats();
     closeModal('createScheduleModal');
     showNotification('Cronograma criado!', 'success');
+}
+
+function openEditScheduleModal(id) {
+    const schedule = schedules.find(item => String(item.id) === String(id));
+    if (!schedule) {
+        showNotification('Cronograma não encontrado.', 'error');
+        return;
+    }
+
+    const date = new Date(schedule.date);
+    const dateValue = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    document.getElementById('editScheduleId').value = schedule.id;
+    document.getElementById('editScheduleName').value = schedule.name;
+    document.getElementById('editScheduleDate').value = dateValue;
+    showModal('editScheduleModal');
+}
+
+function updateSchedule(event) {
+    event.preventDefault();
+
+    const schedule = schedules.find(item => String(item.id) === String(document.getElementById('editScheduleId').value));
+    if (!schedule) {
+        showNotification('Cronograma não encontrado.', 'error');
+        return;
+    }
+
+    const name = document.getElementById('editScheduleName').value.trim();
+    const dateValue = document.getElementById('editScheduleDate').value;
+    const scheduleDate = dateValue ? new Date(`${dateValue}T12:00:00`) : new Date(NaN);
+    if (!name || Number.isNaN(scheduleDate.getTime())) {
+        showNotification('Informe o nome e a data do cronograma.', 'error');
+        return;
+    }
+
+    schedule.name = name;
+    schedule.date = scheduleDate.toISOString();
+    schedule.dateText = scheduleDate.toLocaleDateString('pt-BR');
+    schedule.dayText = scheduleDate.toLocaleDateString('pt-BR', { weekday: 'long' });
+    schedule.employees = buildScheduleEmployeesForDate(scheduleDate);
+    schedule.updatedAt = new Date().toISOString();
+
+    saveData();
+    renderSchedules();
+    updateStats();
+    closeModal('editScheduleModal');
+    showNotification('Cronograma atualizado!', 'success');
 }
 
 function deleteSchedule(id) {
@@ -539,6 +602,7 @@ function renderSchedules() {
             </div>
             <div class="schedule-actions">
                 <button class="btn btn-sm btn-info" onclick="viewSchedule(${s.id})">Visualizar</button>
+                <button class="btn btn-sm btn-secondary" aria-label="Editar cronograma ${s.name}" onclick="openEditScheduleModal(decodeURIComponent('${encodeURIComponent(String(s.id))}'))">Editar</button>
                 <button class="btn btn-sm btn-secondary" onclick="deleteSchedule(${s.id})">Excluir</button>
             </div>
         </div>
@@ -622,6 +686,20 @@ function groupScheduleEmployeesByShift(employeeList) {
     return Array.from(shiftGroups, ([workHours, workers]) => ({ workHours, workers }));
 }
 
+function groupScheduleEmployeesBySector(employeeList) {
+    const sectorGroups = new Map();
+
+    employeeList.forEach(employee => {
+        const sectorName = employee.pdfSector || employee.sector || 'Sem setor';
+        if (!sectorGroups.has(sectorName)) sectorGroups.set(sectorName, []);
+        sectorGroups.get(sectorName).push(employee);
+    });
+
+    const configuredSectors = sectors.map(sector => sector.name).filter(name => sectorGroups.has(name));
+    const otherSectors = Array.from(sectorGroups.keys()).filter(name => !sectors.some(sector => sector.name === name));
+    return [...configuredSectors, ...otherSectors].map(name => ({ name, employees: sectorGroups.get(name) }));
+}
+
 function renderPDFScheduleTable(employeeList) {
     if (!employeeList.length) return '';
 
@@ -645,6 +723,15 @@ function renderPDFScheduleTable(employeeList) {
     `;
 }
 
+function renderPDFSectorSections(employeeList, getTitle) {
+    return groupScheduleEmployeesBySector(employeeList).map(group => `
+        <section class="pdf-special-group">
+            <h3 class="pdf-special-group-title">${getTitle(group.name)}</h3>
+            ${renderPDFScheduleTable(group.employees)}
+        </section>
+    `).join('');
+}
+
 function buildSchedulePDFMarkup(schedule) {
     const scheduleEmployees = (schedule.employees || []).map(scheduleEmployee => {
         const currentEmployee = scheduleEmployee.id == null
@@ -658,23 +745,12 @@ function buildSchedulePDFMarkup(schedule) {
     });
     const specialRoles = new Set(['leader', 'frontCashierFiscal']);
     const regularEmployees = scheduleEmployees.filter(employee => !specialRoles.has(employee.pdfRole));
-    const leadersBySector = new Map();
-
-    scheduleEmployees.filter(employee => employee.pdfRole === 'leader').forEach(leader => {
-        if (!leadersBySector.has(leader.pdfSector)) leadersBySector.set(leader.pdfSector, []);
-        leadersBySector.get(leader.pdfSector).push(leader);
-    });
-
-    const configuredLeaderSectors = sectors.map(sector => sector.name).filter(name => leadersBySector.has(name));
-    const otherLeaderSectors = Array.from(leadersBySector.keys()).filter(name => !sectors.some(sector => sector.name === name));
-    const leaderSections = [...configuredLeaderSectors, ...otherLeaderSectors].map(sectorName => `
-        <section class="pdf-special-group">
-            <h3 class="pdf-special-group-title">Líderes — Setor ${sectorName}</h3>
-            ${renderPDFScheduleTable(leadersBySector.get(sectorName))}
-        </section>
-    `).join('');
+    const leaders = scheduleEmployees.filter(employee => employee.pdfRole === 'leader');
     const frontCashierFiscal = scheduleEmployees.filter(employee => employee.pdfRole === 'frontCashierFiscal');
     const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
+    const regularSections = renderPDFSectorSections(regularEmployees, sectorName => `Setor ${sectorName}`);
+    const leaderSections = renderPDFSectorSections(leaders, sectorName => `Líderes — Setor ${sectorName}`);
+    const fiscalSections = renderPDFSectorSections(frontCashierFiscal, sectorName => `Fiscal da Frente de Caixa — Setor ${sectorName}`);
 
     return `
         <div class="pdf-document">
@@ -683,14 +759,9 @@ function buildSchedulePDFMarkup(schedule) {
                 <div class="pdf-title">CRONOGRAMA DE ESCALA</div>
                 <div class="pdf-subtitle">${schedule.name} • ${scheduleDay}</div>
             </div>
-            ${renderPDFScheduleTable(regularEmployees)}
+            ${regularSections}
             ${leaderSections}
-            ${frontCashierFiscal.length ? `
-                <section class="pdf-special-group">
-                    <h3 class="pdf-special-group-title">Fiscal da Frente de Caixa</h3>
-                    ${renderPDFScheduleTable(frontCashierFiscal)}
-                </section>
-            ` : ''}
+            ${fiscalSections}
         </div>
     `;
 }
@@ -797,6 +868,7 @@ function loadData() {
 document.getElementById('addEmployeeForm').addEventListener('submit', addEmployee);
 document.getElementById('editEmployeeOffDaysForm').addEventListener('submit', updateEmployeeOffDays);
 document.getElementById('createScheduleForm').addEventListener('submit', createSchedule);
+document.getElementById('editScheduleForm').addEventListener('submit', updateSchedule);
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) closeModal(e.target.id);
 });
