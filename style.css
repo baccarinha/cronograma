@@ -1192,6 +1192,29 @@ body {
     page-break-after: avoid;
 }
 
+.pdf-status-subtitle {
+    margin: 7px 0 3px;
+    padding: 4px 6px;
+    border-left: 3px solid #6c757d;
+    background: #f4f6f8;
+    color: #495057;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.pdf-status-working-subtitle {
+    border-left-color: #198754;
+    background: #f1f8f3;
+    color: #246b3f;
+}
+
+.pdf-status-off-subtitle {
+    border-left-color: #dc3545;
+    background: #fff1f0;
+    color: #b4232c;
+}
+
 .pdf-page-column .pdf-worker-name {
     box-sizing: border-box;
     padding: 5px 3px;
@@ -1199,6 +1222,11 @@ body {
     font-size: 11px;
     line-height: 1.3;
     overflow-wrap: anywhere;
+}
+
+.pdf-page-column .pdf-worker-off {
+    border-bottom-color: #ffa39e;
+    color: #b4232c;
 }
 
 .pdf-preview-container .pdf-page {
