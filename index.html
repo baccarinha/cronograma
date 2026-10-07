@@ -250,11 +250,15 @@
     <div id="editEmployeeOffDaysModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Editar Folgas e Classificação no PDF</h2>
+                <h2 class="modal-title">Editar Funcionário, Folgas e PDF</h2>
                 <button class="close-btn" onclick="closeModal('editEmployeeOffDaysModal')">&times;</button>
             </div>
             <form id="editEmployeeOffDaysForm">
                 <input type="hidden" id="editEmployeeId">
+                <div class="form-group">
+                    <label class="form-label" for="editEmployeeName">Nome completo</label>
+                    <input type="text" class="form-input" id="editEmployeeName" required>
+                </div>
                 <div class="form-group">
                     <label class="form-label" for="editEmployeeOffDay">Dia de Folga na Semana</label>
                     <select class="form-select" id="editEmployeeOffDay" required>
@@ -332,6 +336,31 @@
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('createScheduleModal')">Cancelar</button>
                     <button type="submit" class="btn btn-success">Criar Cronograma</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Cronograma -->
+    <div id="editScheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Cronograma</h2>
+                <button class="close-btn" onclick="closeModal('editScheduleModal')">&times;</button>
+            </div>
+            <form id="editScheduleForm">
+                <input type="hidden" id="editScheduleId">
+                <div class="form-group">
+                    <label class="form-label" for="editScheduleName">Nome do cronograma</label>
+                    <input type="text" class="form-input" id="editScheduleName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editScheduleDate">Data da escala</label>
+                    <input type="date" class="form-input" id="editScheduleDate" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editScheduleModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar alterações</button>
                 </div>
             </form>
         </div>
