@@ -1244,3 +1244,17 @@ body {
 .pdf-preview-container .pdf-page {
     margin: 0 auto 18px;
 }
+
+.logout-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 24px 20px 0;
+    padding: 24px 0;
+    border-top: 1px solid #e9ecef;
+}
+
+.logout-button {
+    min-width: 170px;
+    justify-content: center;
+}
