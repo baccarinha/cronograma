@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Gerenciamento de Escala</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: Inter, Arial, sans-serif;
+            background: linear-gradient(135deg, #171421, #35234b);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 35px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 15px 45px #0005;
+        }
+
+        .icon {
+            font-size: 42px;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #292238;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d8d3df;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: 2px solid #b67ae6;
+            border-color: #b67ae6;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 8px;
+            background: #7542a5;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        #mensagem {
+            color: #b42318;
+            font-size: 14px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .rodape {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="login-card">
+        <div class="icon">🔐</div>
+
+        <h1>Acesso do Gestor</h1>
+
+        <p class="subtitle">
+            Gerenciamento de Escala<br>
+            Fort Atacadista
+        </p>
+
+        <form id="formLogin">
+            <label for="email">E-mail</label>
+            <input
+                type="email"
+                id="email"
+                autocomplete="username"
+                placeholder="Digite seu e-mail"
+                required
+            >
+
+            <label for="senha">Senha</label>
+            <input
+                type="password"
+                id="senha"
+                autocomplete="current-password"
+                placeholder="Digite sua senha"
+                required
+            >
+
+            <button type="submit" id="btnEntrar">
+                Entrar no sistema
+            </button>
+
+            <p id="mensagem" role="alert"></p>
+        </form>
+
+        <div class="rodape">
+            Acesso restrito a gestores autorizados
+        </div>
+    </main>
+
+    <script type="module" src="login.js"></script>
+</body>
+</html>
