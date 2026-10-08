@@ -18,5 +18,7 @@
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+export const auth = getAuth(app);
   const analytics = getAnalytics(app);
 
