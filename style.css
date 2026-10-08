@@ -87,21 +87,19 @@ body {
 
 .company-logo {
     background: white;
-    color: var(--primary-color);
-    padding: 15px 30px;
+    padding: 8px 12px;
     border-radius: 12px;
     display: inline-block;
-    font-weight: 700;
-    font-size: 18px;
     margin-bottom: 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     position: relative;
     z-index: 1;
 }
 
-.company-logo i {
-    margin-right: 10px;
-    font-size: 20px;
+.company-logo img {
+    display: block;
+    width: min(250px, 70vw);
+    height: auto;
 }
 
 .current-datetime {
