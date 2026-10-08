@@ -6,7 +6,8 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import {
     getAuth,
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -30,6 +31,22 @@
 
     document.documentElement.style.visibility = "visible";
   });
+
+  const logoutButton = document.getElementById("btnSair");
+  logoutButton.addEventListener("click", async () => {
+    logoutButton.disabled = true;
+    logoutButton.textContent = "Saindo...";
+
+    try {
+      await signOut(auth);
+      window.location.replace("./login.html");
+    } catch (error) {
+      console.error("Erro ao sair da conta:", error);
+      logoutButton.disabled = false;
+      logoutButton.innerHTML = '<i class="fas fa-sign-out-alt" aria-hidden="true"></i> Sair da conta';
+      alert("Não foi possível sair da conta. Tente novamente.");
+    }
+  });
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +62,6 @@
     <!-- Biblioteca html2canvas para captura de elementos -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
-<button id="btnSair" type="button">Sair da conta</button>
 </head>
 <body>
     <div class="main-container">
@@ -196,6 +212,13 @@
                 <!-- Setores serão carregados dinamicamente -->
             </div>
         </div>
+
+        <footer class="logout-footer">
+            <button id="btnSair" class="btn btn-secondary logout-button" type="button">
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                Sair da conta
+            </button>
+        </footer>
     </div>
 
     <!-- Modais -->
