@@ -7,28 +7,12 @@ let sectors = [
     { name: 'Carrinhos', color: '#28a745', icon: 'fas fa-shopping-cart', description: 'Equipe de organização de carrinhos' },
     { name: 'Assistentes', color: '#ffc107', icon: 'fas fa-hands-helping', description: 'Assistentes de frente de caixa' },
     { name: 'Fiscal', color: '#17a2b8', icon: 'fas fa-user-shield', description: 'Fiscais de caixa e prevenção' },
-    { name: 'Operador de loja', color: '#6f42c1', icon: 'fas fa-store', description: 'Operadores de loja' }
+    { name: 'Operador(a) de loja', color: '#6f42c1', icon: 'fas fa-store', description: 'Operadores de loja' }
 ];
-
-const DEFAULT_SECTORS = sectors.map(sector => ({ ...sector }));
 
 let currentDate = new Date();
 let selectedDate = null;
 let pdfPreviewVisible = false;
-let currentScheduleId = null;
-
-const WORK_SCHEDULES = [
-    ['06:00-14:20', '06:00 - 14:20'],
-    ['06:20-14:40', '06:20 - 14:40'],
-    ['06:40-15:00', '06:40 - 15:00'],
-    ['08:00-16:20', '08:00 - 16:20'],
-    ['10:00-18:50', '10:00 - 18:50'],
-    ['11:00-19:20', '11:00 - 19:20'],
-    ['13:00-21:20', '13:00 - 21:20'],
-    ['14:00-22:20', '14:00 - 22:20'],
-    ['14:30-22:50', '14:30 - 22:50'],
-    ['15:00-23:20', '15:00 - 23:20']
-];
 let internetClockTimestamp = null;
 let internetClockPerformance = null;
 let internetClockSyncInProgress = false;
@@ -194,9 +178,33 @@ function getSundayCycleDescription(employee) {
     return cycle === 'D' ? 'D (folga todos os domingos)' : cycle;
 }
 
+function populateEmployeeSectorOptions(selectElement, selectedSector = '') {
+    if (!selectElement) return;
+
+    selectElement.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Selecione um cargo / setor';
+    selectElement.appendChild(placeholder);
+
+    const availableSectors = [...sectors];
+    if (selectedSector && !availableSectors.some(sector => sector.name === selectedSector)) {
+        availableSectors.push({ name: selectedSector });
+    }
+
+    availableSectors.forEach(sector => {
+        const option = document.createElement('option');
+        option.value = sector.name;
+        option.textContent = sector.name;
+        selectElement.appendChild(option);
+    });
+    selectElement.value = selectedSector;
+}
+
 function showAddEmployeeModal(gender = 'mulher') {
     const selectedGender = gender === 'homem' ? 'homem' : 'mulher';
     document.getElementById('employeeGender').value = selectedGender;
+    populateEmployeeSectorOptions(document.getElementById('employeeSector'));
     document.getElementById('addEmployeeModalTitle').textContent =
         `Adicionar Funcionário ${selectedGender === 'homem' ? 'Homem' : 'Mulher'}`;
     populateSundayCycleOptions(
@@ -271,22 +279,7 @@ function openEditEmployeeOffDays(id) {
 
     document.getElementById('editEmployeeId').value = employee.id;
     document.getElementById('editEmployeeName').value = employee.name;
-
-    const sectorSelect = document.getElementById('editEmployeeSector');
-    sectorSelect.replaceChildren();
-    const availableSectors = [...sectors];
-    if (employee.sector && !availableSectors.some(sector => sector.name === employee.sector)) {
-        availableSectors.push({ name: employee.sector });
-    }
-    availableSectors.forEach(sector => {
-        const option = document.createElement('option');
-        option.value = sector.name;
-        option.textContent = sector.name;
-        sectorSelect.appendChild(option);
-    });
-    sectorSelect.value = employee.sector || '';
-
-    document.getElementById('editEmployeeSchedule').value = employee.schedule || '';
+    populateEmployeeSectorOptions(document.getElementById('editEmployeeSector'), employee.sector || '');
     // Registros antigos com sábado de folga passam para a opção permitida mais próxima.
     document.getElementById('editEmployeeOffDay').value =
         ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'nenhum'].includes(employee.offDay)
@@ -312,21 +305,21 @@ function updateEmployeeOffDays(event) {
     }
 
     const name = document.getElementById('editEmployeeName').value.trim();
-    if (!name) {
-        showNotification('Informe o nome do funcionário.', 'error');
+    const sector = document.getElementById('editEmployeeSector').value;
+    if (!name || !sector) {
+        showNotification('Informe o nome e o cargo/setor do funcionário.', 'error');
         return;
     }
 
     employee.name = name;
-    employee.sector = document.getElementById('editEmployeeSector').value;
-    employee.schedule = document.getElementById('editEmployeeSchedule').value;
+    employee.sector = sector;
     employee.offDay = document.getElementById('editEmployeeOffDay').value;
     employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
 
     saveData();
+    renderSectors();
     renderEmployees();
     renderDashboardEmployees();
-    renderSectors();
     updateStats();
     closeModal('editEmployeeOffDaysModal');
     showNotification('Funcionário atualizado!', 'success');
@@ -650,11 +643,7 @@ function updateSchedule(event) {
     schedule.date = scheduleDate.toISOString();
     schedule.dateText = scheduleDate.toLocaleDateString('pt-BR');
     schedule.dayText = scheduleDate.toLocaleDateString('pt-BR', { weekday: 'long' });
-    const previousEmployees = new Map((schedule.employees || []).map(employee => [String(employee.id), employee]));
-    schedule.employees = buildScheduleEmployeesForDate(scheduleDate).map(employee => ({
-        ...employee,
-        schedule: previousEmployees.get(String(employee.id))?.schedule || employee.schedule
-    }));
+    schedule.employees = buildScheduleEmployeesForDate(scheduleDate);
     schedule.updatedAt = new Date().toISOString();
 
     saveData();
@@ -675,10 +664,9 @@ function deleteSchedule(id) {
 }
 
 function viewSchedule(id) {
-    const schedule = schedules.find(s => String(s.id) === String(id));
+    const schedule = schedules.find(s => s.id === id);
     if (!schedule) return;
     
-    currentScheduleId = schedule.id;
     document.getElementById('viewScheduleTitle').textContent = schedule.name;
     
     const scheduleDate = new Date(schedule.date);
@@ -696,29 +684,6 @@ function viewSchedule(id) {
     showModal('viewScheduleModal');
 }
 
-function getWorkScheduleOptions(selectedValue) {
-    const options = [...WORK_SCHEDULES];
-    if (selectedValue && !options.some(([value]) => value === selectedValue)) {
-        options.unshift([selectedValue, selectedValue.replace('-', ' - ')]);
-    }
-    return options.map(([value, label]) =>
-        `<option value="${value}" ${value === selectedValue ? 'selected' : ''}>${label}</option>`
-    ).join('');
-}
-
-function updateScheduleEmployeeShift(scheduleId, employeeId, workSchedule) {
-    const schedule = schedules.find(item => String(item.id) === String(scheduleId));
-    const employee = schedule?.employees?.find(item => String(item.id) === String(employeeId));
-    if (!schedule || !employee || !workSchedule) return;
-
-    employee.schedule = workSchedule;
-    schedule.updatedAt = new Date().toISOString();
-    saveData();
-    renderSchedules();
-    viewSchedule(schedule.id);
-    showNotification(`Horário de ${employee.name} atualizado nesta escala.`, 'success');
-}
-
 function renderScheduleEmployees(employeesList) {
     const organized = {};
     sectors.forEach(s => organized[s.name] = employeesList.filter(e => e.sector === s.name));
@@ -734,13 +699,7 @@ function renderScheduleEmployees(employeesList) {
                     ${sectorEmployees.map(e => `
                         <div style="font-size: 0.9em; padding: 5px; border-radius: 4px; background: ${e.status === 'FOLGA' ? '#fff1f0' : '#f6ffed'}; border: 1px solid ${e.status === 'FOLGA' ? '#ffa39e' : '#b7eb8f'};">
                             <strong>${e.name}</strong><br>
-                            ${e.schedule || 'Horário não informado'} - ${e.status}<br>
-                            <label style="display: block; margin-top: 6px; font-size: 0.85em;">
-                                Horário na escala
-                                <select class="form-select" aria-label="Horário de ${e.name} nesta escala" onchange="updateScheduleEmployeeShift(decodeURIComponent('${encodeURIComponent(String(currentScheduleId))}'), decodeURIComponent('${encodeURIComponent(String(e.id))}'), this.value)" style="margin-top: 4px; padding: 6px; font-size: 0.9em;">
-                                    ${getWorkScheduleOptions(e.schedule)}
-                                </select>
-                            </label>
+                            ${e.schedule} - ${e.status}
                         </div>
                     `).join('')}
                 </div>
@@ -1131,10 +1090,13 @@ function loadData() {
     if (s) schedules = JSON.parse(s);
     if (sec) {
         sectors = JSON.parse(sec);
-        // Migra listas salvas antes da inclusão do novo setor sem sobrescrever setores personalizados.
-        const storeOperatorSector = DEFAULT_SECTORS.find(sector => sector.name === 'Operador de loja');
-        if (storeOperatorSector && !sectors.some(sector => sector.name === storeOperatorSector.name)) {
-            sectors.push({ ...storeOperatorSector });
+        if (!sectors.some(sector => sector.name === 'Operador(a) de loja')) {
+            sectors.push({
+                name: 'Operador(a) de loja',
+                color: '#6f42c1',
+                icon: 'fas fa-store',
+                description: 'Operadores de loja'
+            });
         }
     }
 }
