@@ -7,7 +7,7 @@ let sectors = [
     { name: 'Carrinhos', color: '#28a745', icon: 'fas fa-shopping-cart', description: 'Equipe de organização de carrinhos' },
     { name: 'Assistentes', color: '#ffc107', icon: 'fas fa-hands-helping', description: 'Assistentes de frente de caixa' },
     { name: 'Fiscal', color: '#17a2b8', icon: 'fas fa-user-shield', description: 'Fiscais de caixa e prevenção' },
-    { name: 'Operador(a) de loja', color: '#6f42c1', icon: 'fas fa-store', description: 'Operadores de loja' }
+    { name: 'Operador de loja', color: '#6f42c1', icon: 'fas fa-store', description: 'Operadores de loja' }
 ];
 
 let currentDate = new Date();
@@ -184,7 +184,7 @@ function populateEmployeeSectorOptions(selectElement, selectedSector = '') {
     selectElement.replaceChildren();
     const placeholder = document.createElement('option');
     placeholder.value = '';
-    placeholder.textContent = 'Selecione um cargo / setor';
+    placeholder.textContent = 'Selecione um cargo';
     selectElement.appendChild(placeholder);
 
     const availableSectors = [...sectors];
@@ -1090,15 +1090,13 @@ function loadData() {
     if (s) schedules = JSON.parse(s);
     if (sec) {
         sectors = JSON.parse(sec);
-        if (!sectors.some(sector => sector.name === 'Operador(a) de loja')) {
-            sectors.push({
-                name: 'Operador(a) de loja',
-                color: '#6f42c1',
-                icon: 'fas fa-store',
-                description: 'Operadores de loja'
-            });
-        }
+        sectors = sectors.map(sector => sector.name === 'Operador(a) de loja'
+            ? { ...sector, name: 'Operador de loja' }
+            : sector);
     }
+    employees = employees.map(employee => employee.sector === 'Operador(a) de loja'
+        ? { ...employee, sector: 'Operador de loja' }
+        : employee);
 }
 
 // Event Listeners
