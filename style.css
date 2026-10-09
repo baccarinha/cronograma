@@ -1250,6 +1250,7 @@ body {
     font-size: 9px;
     line-height: 1.2;
     overflow-wrap: anywhere;
+    text-transform: uppercase;
 }
 
 .pdf-page-column .pdf-worker-off {
