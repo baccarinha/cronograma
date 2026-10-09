@@ -1188,13 +1188,19 @@ body {
     overflow: hidden;
 }
 
-.pdf-page-column .pdf-special-group-title {
-    margin: 10px 0 6px;
-    padding: 4px 6px;
-    border: 1px solid #6c757d;
-    border-left: 4px solid #495057;
+.pdf-sector-block {
+    box-sizing: border-box;
+    margin: 0 0 8px;
+    padding: 5px;
+    border: 1px solid #7b858f;
     border-radius: 3px;
-    background: #f3f5f7;
+    background: #fff;
+}
+
+.pdf-page-column .pdf-special-group-title {
+    margin: 0 0 5px;
+    padding: 0 0 4px;
+    border-bottom: 1px solid #6c757d;
     color: #343a40;
     font-size: 11px;
     line-height: 1.25;
