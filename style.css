@@ -1275,3 +1275,41 @@ body {
     min-width: 170px;
     justify-content: center;
 }
+
+
+/* Domingos Correspondentes */
+.sunday-page-heading { margin-bottom: 26px; }
+.sunday-eyebrow { color: var(--primary-color); font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+.sunday-page-heading h2 { margin: 5px 0; color: var(--dark-color); font-size: 26px; }
+.sunday-page-heading p, .sunday-cycle-note { color: #667085; }
+.sunday-gender-chooser { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; max-width: 850px; }
+.sunday-gender-card { display: flex; align-items: center; gap: 16px; padding: 22px; border: 1px solid #e6e9ef; border-radius: 14px; background: #fff; color: var(--dark-color); text-align: left; cursor: pointer; box-shadow: 0 5px 18px rgba(30, 41, 59, .07); transition: var(--transition); }
+.sunday-gender-card:hover { transform: translateY(-3px); border-color: #cbd5e1; box-shadow: 0 10px 24px rgba(30, 41, 59, .12); }
+.sunday-gender-card > span:nth-child(2) { display: flex; flex-direction: column; gap: 4px; }
+.sunday-gender-card strong { font-size: 19px; }
+.sunday-gender-card small { color: #667085; font-size: 13px; }
+.sunday-gender-icon { display: grid; place-items: center; width: 52px; height: 52px; flex: 0 0 52px; border-radius: 14px; font-size: 22px; }
+.sunday-gender-card.woman .sunday-gender-icon { color: #a23e78; background: #fce7f3; }
+.sunday-gender-card.man .sunday-gender-icon { color: #2563a6; background: #e6f2ff; }
+.sunday-card-arrow { margin-left: auto; color: #98a2b3; }
+.sunday-calendar-toolbar { display: flex; align-items: center; gap: 18px; margin: 8px 0 14px; }
+.sunday-calendar-toolbar .btn { flex: 0 0 auto; }
+.sunday-calendar-toolbar h3 { color: var(--dark-color); font-size: 21px; }
+.sunday-cycle-note { margin-bottom: 18px; }
+.sunday-year-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.sunday-year-button { min-width: 68px; padding: 9px 12px; border: 1px solid #d9dee7; border-radius: 8px; background: #fff; color: #475467; cursor: pointer; transition: var(--transition); }
+.sunday-year-button:hover { border-color: var(--primary-color); color: var(--primary-color); }
+.sunday-year-button.active { border-color: var(--primary-color); background: var(--primary-color); color: #fff; }
+.sunday-month-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.sunday-month-card { padding: 16px; border: 1px solid #e8ebf0; border-top: 3px solid var(--primary-color); border-radius: 10px; background: #fff; box-shadow: 0 3px 10px rgba(30, 41, 59, .05); }
+.sunday-month-card h4 { margin-bottom: 10px; color: #344054; font-size: 15px; }
+.sunday-date-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid #f0f1f4; color: #475467; }
+.sunday-cycle-badge { padding: 4px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.sunday-cycle-badge.cycle-a { background: #e8f5e9; color: #26733b; }
+.sunday-cycle-badge.cycle-b { background: #e8f1ff; color: #2459a6; }
+.sunday-cycle-badge.cycle-c { background: #fff1dc; color: #9a5b00; }
+@media (max-width: 600px) {
+    .sunday-calendar-toolbar { align-items: flex-start; flex-direction: column; gap: 12px; }
+    .sunday-calendar-toolbar h3 { font-size: 18px; }
+    .sunday-year-button { flex: 1 0 58px; }
+}
