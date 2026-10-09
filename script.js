@@ -1,3 +1,7 @@
+let firestoreStorage = null;
+let firestoreReady = false;
+let firestoreSaveQueue = Promise.resolve();
+
 // Variáveis globais
 let employees = [];
 let schedules = [];
@@ -20,18 +24,77 @@ let activeUserId = null;
 let applicationInitialized = false;
 
 // Inicialização
-function initializeApplication(userId) {
+async function initializeApplication(userId) {
     if (!userId || applicationInitialized) return;
+
     activeUserId = userId;
     applicationInitialized = true;
-    loadData();
+
+    try {
+        // Importação dinâmica: mantém este arquivo como script clássico,
+        // necessário para os handlers onclick existentes no HTML.
+        firestoreStorage = await import('./firestore-storage.js');
+
+        const cloudData = await firestoreStorage.loadUserData(userId);
+        firestoreReady = true;
+
+        if (cloudData.exists) {
+            employees = cloudData.employees ?? [];
+            schedules = cloudData.schedules ?? [];
+
+            if (Array.isArray(cloudData.sectors)) {
+                sectors = cloudData.sectors.map(sector =>
+                    sector.name === 'Operador(a) de loja'
+                        ? { ...sector, name: 'Operador de loja' }
+                        : sector
+                );
+
+                let hasStoreOperator = false;
+                sectors = sectors.filter(sector => {
+                    if (sector.name !== 'Operador de loja') return true;
+                    if (hasStoreOperator) return false;
+                    hasStoreOperator = true;
+                    return true;
+                });
+
+                if (!hasStoreOperator) {
+                    sectors.push({
+                        name: 'Operador de loja',
+                        color: '#6f42c1',
+                        icon: 'fas fa-store',
+                        description: 'Operadores da frente de caixa'
+                    });
+                }
+            }
+
+            employees = employees.map(employee =>
+                employee.sector === 'Operador(a) de loja'
+                    ? { ...employee, sector: 'Operador de loja' }
+                    : employee
+            );
+        } else {
+            // Na primeira carga, aproveita os dados antigos do localStorage.
+            // loadData() chama saveData(), que os envia para o Firestore.
+            loadData();
+        }
+    } catch (error) {
+        console.error('Erro ao carregar dados do Firestore:', error);
+        showNotification(
+            'Não foi possível conectar ao Firestore. Os dados locais serão usados.',
+            'error'
+        );
+
+        // Mantém o app utilizável com localStorage se Firestore falhar.
+        loadData();
+    }
+
     updateStats();
     renderEmployees();
     renderDashboardEmployees();
     renderSchedules();
     renderSectors();
     generateCalendar();
-    
+
     // Configurar data mínima para o calendário (hoje)
     selectedDate = new Date();
     selectedDate.setHours(0, 0, 0, 0);
@@ -1254,9 +1317,39 @@ function updateStats() {
 function saveData() {
     if (!activeUserId) return;
 
-    localStorage.setItem(`fortEmployees:${activeUserId}`, JSON.stringify(employees));
-    localStorage.setItem(`fortSchedules:${activeUserId}`, JSON.stringify(schedules));
-    localStorage.setItem(`fortSectors:${activeUserId}`, JSON.stringify(sectors));
+    const localState = { employees, schedules, sectors };
+
+    // Mantém o cache local e a compatibilidade com o comportamento atual.
+    localStorage.setItem(
+        `fortEmployees:${activeUserId}`,
+        JSON.stringify(employees)
+    );
+    localStorage.setItem(
+        `fortSchedules:${activeUserId}`,
+        JSON.stringify(schedules)
+    );
+    localStorage.setItem(
+        `fortSectors:${activeUserId}`,
+        JSON.stringify(sectors)
+    );
+
+    // Não envia nada ao Firestore até a leitura inicial terminar.
+    if (!firestoreReady || !firestoreStorage) return;
+
+    const uid = activeUserId;
+    const snapshot = JSON.parse(JSON.stringify(localState));
+
+    // Enfileira as gravações para preservar a ordem das alterações.
+    firestoreSaveQueue = firestoreSaveQueue
+        .catch(() => {})
+        .then(() => firestoreStorage.saveUserData(uid, snapshot))
+        .catch(error => {
+            console.error('Erro ao salvar dados no Firestore:', error);
+            showNotification(
+                'Não foi possível salvar no Firestore. Confira a conexão e as regras.',
+                'error'
+            );
+        });
 }
 
 function loadData() {
