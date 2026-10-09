@@ -6,8 +6,11 @@ let sectors = [
     { name: 'Auto Atendimento', color: '#007bff', icon: 'fas fa-robot', description: 'Caixas de autoatendimento' },
     { name: 'Carrinhos', color: '#28a745', icon: 'fas fa-shopping-cart', description: 'Equipe de organização de carrinhos' },
     { name: 'Assistentes', color: '#ffc107', icon: 'fas fa-hands-helping', description: 'Assistentes de frente de caixa' },
-    { name: 'Fiscal', color: '#17a2b8', icon: 'fas fa-user-shield', description: 'Fiscais de caixa e prevenção' }
+    { name: 'Fiscal', color: '#17a2b8', icon: 'fas fa-user-shield', description: 'Fiscais de caixa e prevenção' },
+    { name: 'Operador de loja', color: '#6f42c1', icon: 'fas fa-store', description: 'Operadores de loja' }
 ];
+
+const DEFAULT_SECTORS = sectors.map(sector => ({ ...sector }));
 
 let currentDate = new Date();
 let selectedDate = null;
@@ -1109,7 +1112,14 @@ function loadData() {
     const sec = localStorage.getItem('fortSectors');
     if (e) employees = JSON.parse(e);
     if (s) schedules = JSON.parse(s);
-    if (sec) sectors = JSON.parse(sec);
+    if (sec) {
+        sectors = JSON.parse(sec);
+        // Migra listas salvas antes da inclusão do novo setor sem sobrescrever setores personalizados.
+        const storeOperatorSector = DEFAULT_SECTORS.find(sector => sector.name === 'Operador de loja');
+        if (storeOperatorSector && !sectors.some(sector => sector.name === storeOperatorSector.name)) {
+            sectors.push({ ...storeOperatorSector });
+        }
+    }
 }
 
 // Event Listeners
