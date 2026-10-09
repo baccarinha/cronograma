@@ -892,6 +892,7 @@ function buildSchedulePDFPages(schedule, capture) {
     let currentPage = createSchedulePDFPage(capture, schedule);
     let currentColumnIndex = 0;
     let currentColumn = currentPage.columns[currentColumnIndex];
+    let currentSectorBlock = null;
     let context = { sector: null, workHours: null, subgroup: null };
 
     const advanceColumn = () => {
@@ -902,6 +903,7 @@ function buildSchedulePDFPages(schedule, capture) {
             currentColumnIndex = 0;
         }
         currentColumn = currentPage.columns[currentColumnIndex];
+        currentSectorBlock = null;
         context = { sector: null, workHours: null, subgroup: null };
     };
 
@@ -911,13 +913,19 @@ function buildSchedulePDFPages(schedule, capture) {
         while (!placed) {
             const columnWasEmpty = currentColumn.childElementCount === 0;
             const previousContext = { ...context };
+            const previousSectorBlock = currentSectorBlock;
             const addedHeadings = [];
+            let createdSectorBlock = false;
 
             if (context.sector !== sectorName) {
+                currentSectorBlock = document.createElement('section');
+                currentSectorBlock.className = 'pdf-sector-block';
+                currentColumn.appendChild(currentSectorBlock);
+                createdSectorBlock = true;
                 const sectorHeading = document.createElement('h3');
                 sectorHeading.className = 'pdf-special-group-title';
                 sectorHeading.textContent = `Setor ${sectorName}`;
-                currentColumn.appendChild(sectorHeading);
+                currentSectorBlock.appendChild(sectorHeading);
                 addedHeadings.push(sectorHeading);
                 context.sector = sectorName;
                 context.workHours = null;
@@ -928,7 +936,7 @@ function buildSchedulePDFPages(schedule, capture) {
                 const shiftHeading = document.createElement('h4');
                 shiftHeading.className = 'pdf-shift-subtitle';
                 shiftHeading.textContent = `Horário de trabalho: ${workHours}`;
-                currentColumn.appendChild(shiftHeading);
+                currentSectorBlock.appendChild(shiftHeading);
                 addedHeadings.push(shiftHeading);
                 context.workHours = workHours;
                 context.subgroup = null;
@@ -938,7 +946,7 @@ function buildSchedulePDFPages(schedule, capture) {
                 const subgroupHeading = document.createElement('h5');
                 subgroupHeading.className = `pdf-status-subtitle ${subgroupKey === 'off' ? 'pdf-status-off-subtitle' : 'pdf-status-working-subtitle'}`;
                 subgroupHeading.textContent = `${subgroupLabel} — ${subgroupCount} ${subgroupCount === 1 ? 'funcionário' : 'funcionários'}`;
-                currentColumn.appendChild(subgroupHeading);
+                currentSectorBlock.appendChild(subgroupHeading);
                 addedHeadings.push(subgroupHeading);
                 context.subgroup = subgroupKey;
             }
@@ -946,7 +954,7 @@ function buildSchedulePDFPages(schedule, capture) {
             const employeeName = document.createElement('div');
             employeeName.className = `pdf-worker-name ${subgroupKey === 'off' ? 'pdf-worker-off' : ''}`;
             employeeName.textContent = employee.name || 'Nome não informado';
-            currentColumn.appendChild(employeeName);
+            currentSectorBlock.appendChild(employeeName);
 
             if (columnWasEmpty || currentColumn.scrollHeight <= currentColumn.clientHeight) {
                 placed = true;
@@ -955,6 +963,10 @@ function buildSchedulePDFPages(schedule, capture) {
 
             employeeName.remove();
             addedHeadings.reverse().forEach(heading => heading.remove());
+            if (createdSectorBlock) {
+                currentSectorBlock.remove();
+                currentSectorBlock = previousSectorBlock;
+            }
             context = previousContext;
             advanceColumn();
         }
