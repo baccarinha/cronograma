@@ -1153,8 +1153,9 @@ body {
 
 .pdf-page .pdf-header {
     flex: 0 0 auto;
-    margin-bottom: 14px;
-    padding: 14px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    text-align: center;
 }
 
 .pdf-page .pdf-logo {
@@ -1168,14 +1169,16 @@ body {
 }
 
 .pdf-page .pdf-subtitle {
+    color: #343a40;
     font-size: 12px;
+    font-weight: 700;
 }
 
 .pdf-page-columns {
     display: grid;
     flex: 1 1 auto;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
     min-height: 0;
 }
 
@@ -1186,18 +1189,18 @@ body {
 }
 
 .pdf-page-column .pdf-special-group-title {
-    margin: 0 0 8px;
-    padding-bottom: 5px;
+    margin: 0 0 6px;
+    padding-bottom: 4px;
     border-bottom: 2px solid #6c757d;
     color: #343a40;
-    font-size: 14px;
+    font-size: 11px;
     line-height: 1.25;
 }
 
 .pdf-shift-subtitle {
-    margin: 9px 0 4px;
+    margin: 7px 0 3px;
     color: #6c757d;
-    font-size: 10px;
+    font-size: 8px;
     font-weight: 700;
     line-height: 1.25;
     break-after: avoid;
@@ -1205,12 +1208,12 @@ body {
 }
 
 .pdf-status-subtitle {
-    margin: 7px 0 3px;
-    padding: 4px 6px;
+    margin: 5px 0 2px;
+    padding: 3px 4px;
     border-left: 3px solid #6c757d;
     background: #f4f6f8;
     color: #495057;
-    font-size: 10px;
+    font-size: 8px;
     font-weight: 700;
     line-height: 1.25;
 }
@@ -1229,10 +1232,10 @@ body {
 
 .pdf-page-column .pdf-worker-name {
     box-sizing: border-box;
-    padding: 5px 3px;
+    padding: 3px 2px;
     border-bottom: 1px solid #e6e8eb;
-    font-size: 11px;
-    line-height: 1.3;
+    font-size: 9px;
+    line-height: 1.2;
     overflow-wrap: anywhere;
 }
 
