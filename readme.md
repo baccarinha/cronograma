@@ -2,129 +2,78 @@
 
 [Cronograma](https://baccarinha.github.io/cronograma/)
 
+# Sistema de gerenciamento de escala — Frente de Caixa
 
-Projeto de Escala de Frente de Caixa
+## Visão geral
 
-O projeto Gerenciamento de Escala da Frente de Caixa é um sistema web desenvolvido para organizar e controlar escalas de trabalho de funcionários, especialmente voltado para ambientes como supermercados ou lojas com múltiplos setores. O sistema funciona como um painel administrativo (dashboard) que permite cadastrar colaboradores, definir horários, organizar folgas e gerar cronogramas de forma estruturada e visual.
+O sistema **Gerenciamento de Escala da Frente de Caixa**, identificado na página do Fort Atacadista, destina-se à gestão de funcionários e cronogramas de trabalho. A interface inicial apresenta indicadores para acompanhar o total de funcionários, quantos estão trabalhando hoje, os setores ativos e a quantidade de cronogramas criados.
 
-Acesso
+O acesso à área de gestão é restrito a gestores autorizados e protegido por login com e-mail e senha.
 
-O site está disponível em 
+## O que o sistema permite gerenciar
 
-baccarinha.github.io/cronograma. É uma aplicação estática: basta abrir o endereço no navegador.
+O sistema de escala deve contemplar operações de cadastro e manutenção para os seguintes itens:
 
-Funcionalidades disponíveis
+### Funcionários (nomes)
 
-Painel e funcionários
+- **Cadastrar** novos funcionários (nomes).
 
-•
-O painel apresenta cartões de resumo e busca de funcionários.
+- **Editar** nomes já cadastrados.
 
-•
-O cadastro de funcionário inclui nome, setor, horário, folga semanal e ciclo de domingo.
+- **Excluir** nomes existentes.
 
-•
-Na aba Funcionários, a ação Editar folgas permite mudar a folga semanal e o ciclo dominical.
+O cadastro de funcionários é o ponto de partida para organizar a escala. Sem funcionários cadastrados, a interface informa que é necessário adicioná-los para começar a gerenciar o trabalho.
 
-•
-A ação Excluir remove um funcionário da lista após confirmação. Cronogramas já gerados mantêm o retrato dos dados usado quando foram criados.
+### Cronogramas
 
-Folgas de domingo
+- **Criar** novos cronogramas.
 
-Ciclo
-Regra
-A
-Folga em domingos alternados, iniciando em 04/01/2026.
-B
-Folga nos domingos alternados opostos ao ciclo A, iniciando em 11/01/2026.
-C
-Trabalha todos os domingos.
-D
-Folga todos os domingos.
+- **Editar** cronogramas existentes.
 
+- **Excluir** cronogramas.
 
+Os cronogramas organizam a escala de trabalho dos funcionários. A página informa quando ainda não há nenhum cronograma criado e orienta o gestor a criar um para organizar a escala.
 
+## Regra de consistência dos setores na semana
 
-A folga semanal é configurada separadamente e pode ser de segunda a sexta-feira ou Nenhum dia de semana. A mudança de folgas afeta cronogramas criados depois da alteração, não os registros históricos.
+Os setores de escala definidos para **segunda-feira** devem ser replicados e permanecer **iguais nos demais dias da mesma semana**. Portanto, ao montar ou atualizar um cronograma semanal, deve-se manter a mesma relação de departamentos/setores de segunda a domingo; a composição dos setores não deve variar por dia.
 
-Cronogramas e PDF
+> Esta regra trata da consistência dos departamentos/setores. Ela não especifica, por si só, que os funcionários, horários ou folgas precisam ser iguais em todos os dias.
 
-•
-Cria cronogramas com nome e uma data escolhida no calendário.
+## Fluxo básico de uso
 
-•
-Calcula quem está trabalhando ou de folga naquela data e organiza a visualização por setor.
+1. Acesse a página do sistema e autentique-se com as credenciais de gestor autorizado.
 
-•
-Permite visualizar os detalhes, abrir a prévia de PDF e baixar o cronograma em PDF.
+1. Cadastre os nomes dos funcionários que participarão da escala.
 
-•
-Permite excluir cronogramas com confirmação.
+1. Crie um cronograma para o período desejado.
 
-Setores
+1. Defina os setores da semana na segunda-feira e replique a mesma composição nos outros dias.
 
-O sistema começa com cinco setores: Caixa, Auto Atendimento, Carrinhos, Assistentes e Fiscal. É possível editar o nome, a cor, o ícone e a descrição dos setores existentes.
+1. Organize a escala dos funcionários no cronograma.
 
-Relógio
+1. Revise e salve o cronograma; use as opções de edição para ajustes posteriores.
 
-O cabeçalho mostra dia, data e horário de Brasília. O horário é obtido pela internet por meio da API 
+1. Exclua nomes ou cronogramas somente quando não forem mais necessários.
 
-Time.now, atualizado na tela a cada segundo e sincronizado novamente a cada minuto. Se a conexão falhar, a aplicação usa o horário do dispositivo ou a última sincronização recebida.
+## Indicadores da página inicial
 
-Como usar
+A tela inicial apresenta os seguintes indicadores:
 
-1.
-Abra a aba Funcionários e selecione Adicionar Funcionário.
+- **Total de Funcionários** — quantidade de funcionários cadastrados.
 
-2.
-Informe os dados e escolha separadamente a folga semanal e o ciclo de domingo.
+- **Trabalhando Hoje** — quantidade de funcionários escalados para o dia atual.
 
-3.
-No cartão do funcionário, use Editar folgas para alterar esses dois campos ou Excluir para removê-lo após confirmar.
+- **Setores Ativos** — quantidade de setores considerados ativos.
 
-4.
-Abra Cronogramas, selecione Novo Cronograma, informe um nome e escolha a data no calendário.
+- **Cronogramas Criados** — quantidade de cronogramas cadastrados.
 
-5.
-Em Cronogramas, selecione Visualizar para conferir a escala e gerar o PDF.
+Os números exibidos na página pública durante a consulta eram contadores demonstrativos/zerados para funcionários e cronogramas, e cinco setores ativos. Eles podem mudar conforme os dados reais do sistema.
 
-6.
-Em Setores, edite as informações visuais dos setores disponíveis.
+## Limite desta documentação
 
-Dados e limitações desta versão
+A página pública redireciona para uma tela de **Acesso do Gestor** e informa que o acesso é restrito a gestores autorizados. Como não foram fornecidas credenciais, não foi possível inspecionar telas internas, campos, botões, regras de validação, formatos de horário, impressão/exportação ou detalhes de salvamento. Assim, este documento descreve apenas o que foi possível confirmar na interface pública e as regras operacionais especificadas para o sistema.
 
-Os dados são armazenados no localStorage do navegador (fortEmployees, fortSchedules e fortSectors). Eles não são sincronizados automaticamente entre dispositivos, navegadores ou perfis diferentes. Limpar os dados do navegador pode apagá-los.
+## Referência
 
-Embora apareçam na interface, os botões Exportar Dados e Importar Dados não têm rotinas correspondentes implementadas no código atual; não os utilize como único meio de backup ou recuperação.
-
-Também não há, nesta versão, formulário para editar nome, setor ou horário de um funcionário, nem para editar um cronograma depois de criado. As opções existentes permitem editar as folgas e excluir funcionários ou cronogramas.
-
-Tecnologias e arquivos
-
-•
-HTML, CSS e JavaScript — interface e regras da aplicação.
-
-•
-Font Awesome — ícones; jsPDF e html2canvas — prévia e geração de PDF.
-
-•
-localStorage — persistência local no navegador.
-
-•
-GitHub Pages — hospedagem estática.
-
-•
-Time.now — fonte externa de horário.
-
-Arquivo
-Responsabilidade
-index.html
-Estrutura da página, formulários e modais.
-style.css
-Estilos e adaptação visual.
-script.js
-Funcionários, folgas, setores, cronogramas, PDF e relógio.
-readme.md
-Esta documentação.
-.github/workflows/deploy.yml
-Fluxo de publicação do site.
+- [Sistema de Gerenciamento de Escala da Frente de Caixa](https://baccarinha.github.io/cronograma/)
