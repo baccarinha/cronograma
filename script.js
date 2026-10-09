@@ -1257,7 +1257,14 @@ function loadData() {
         sectors = JSON.parse(sec).map(sector => sector.name === 'Operador(a) de loja'
             ? { ...sector, name: 'Operador de loja' }
             : sector);
-        if (!sectors.some(sector => sector.name === 'Operador de loja')) {
+        let hasStoreOperator = false;
+        sectors = sectors.filter(sector => {
+            if (sector.name !== 'Operador de loja') return true;
+            if (hasStoreOperator) return false;
+            hasStoreOperator = true;
+            return true;
+        });
+        if (!hasStoreOperator) {
             sectors.push({
                 name: 'Operador de loja',
                 color: '#6f42c1',
@@ -1269,6 +1276,7 @@ function loadData() {
     employees = employees.map(employee => employee.sector === 'Operador(a) de loja'
         ? { ...employee, sector: 'Operador de loja' }
         : employee);
+    saveData();
 }
 
 // Event Listeners
