@@ -6,8 +6,7 @@ let sectors = [
     { name: 'Auto Atendimento', color: '#007bff', icon: 'fas fa-robot', description: 'Caixas de autoatendimento' },
     { name: 'Carrinhos', color: '#28a745', icon: 'fas fa-shopping-cart', description: 'Equipe de organização de carrinhos' },
     { name: 'Assistentes', color: '#ffc107', icon: 'fas fa-hands-helping', description: 'Assistentes de frente de caixa' },
-    { name: 'Fiscal', color: '#17a2b8', icon: 'fas fa-user-shield', description: 'Fiscais de caixa e prevenção' },
-    { name: 'Operador de loja', color: '#6f42c1', icon: 'fas fa-store', description: 'Operadores de loja' }
+    { name: 'Fiscal', color: '#17a2b8', icon: 'fas fa-user-shield', description: 'Fiscais de caixa e prevenção' }
 ];
 
 let currentDate = new Date();
@@ -187,8 +186,10 @@ function populateEmployeeSectorOptions(selectElement, selectedSector = '') {
     placeholder.textContent = 'Selecione um cargo';
     selectElement.appendChild(placeholder);
 
-    const availableSectors = [...sectors];
-    if (selectedSector && !availableSectors.some(sector => sector.name === selectedSector)) {
+    const removedStoreOperatorNames = ['Operador de loja', 'Operador(a) de loja'];
+    const availableSectors = sectors.filter(sector => !removedStoreOperatorNames.includes(sector.name));
+    if (selectedSector && !removedStoreOperatorNames.includes(selectedSector)
+        && !availableSectors.some(sector => sector.name === selectedSector)) {
         availableSectors.push({ name: selectedSector });
     }
 
@@ -1090,9 +1091,9 @@ function loadData() {
     if (s) schedules = JSON.parse(s);
     if (sec) {
         sectors = JSON.parse(sec);
-        sectors = sectors.map(sector => sector.name === 'Operador(a) de loja'
-            ? { ...sector, name: 'Operador de loja' }
-            : sector);
+        sectors = sectors.filter(sector =>
+            !['Operador de loja', 'Operador(a) de loja'].includes(sector.name)
+        );
     }
     employees = employees.map(employee => employee.sector === 'Operador(a) de loja'
         ? { ...employee, sector: 'Operador de loja' }
