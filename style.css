@@ -1207,11 +1207,15 @@ body {
 }
 
 .pdf-shift-subtitle {
-    margin: 7px 0 3px;
-    color: #6c757d;
+    margin: 5px 0 3px;
+    padding: 4px 5px;
+    border-radius: 3px;
+    background: #fff4cc;
+    color: #665515;
     font-size: 8px;
     font-weight: 700;
     line-height: 1.25;
+    text-align: center;
     break-after: avoid;
     page-break-after: avoid;
 }
