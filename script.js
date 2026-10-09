@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
     selectedDate = new Date();
     selectedDate.setHours(0, 0, 0, 0);
     startInternetClock();
+    window.setInterval(() => {
+        updateStats();
+        renderDashboardEmployees();
+    }, 60_000);
 });
 
 // Relógio sincronizado pela internet (fuso horário de Brasília)
@@ -68,6 +72,8 @@ async function syncInternetClock() {
         internetClockPerformance = responseReceived;
         setInternetClockStatus('Horário de Brasília sincronizado pela internet', 'synced');
         updateInternetClockDisplay();
+        updateStats();
+        renderDashboardEmployees();
     } catch (error) {
         const message = internetClockTimestamp === null
             ? 'Sem conexão — usando o horário deste dispositivo'
@@ -431,8 +437,8 @@ function renderDashboardEmployees() {
         return;
     }
     
+    const today = getCurrentSaoPauloDate();
     container.innerHTML = filteredEmployees.map(employee => {
-        const today = new Date();
         const isOffDay = getEmployeeStatusForDate(employee, today) === 'FOLGA';
         
         const status = isOffDay ? 'FOLGA' : 'Trabalhando';
@@ -544,6 +550,74 @@ function getEmployeeStatusForDate(employee, date) {
     }
 
     return isOffDay ? 'FOLGA' : 'Trabalhando';
+}
+
+function getCurrentSaoPauloDate() {
+    const now = internetClockTimestamp === null
+        ? new Date()
+        : new Date(internetClockTimestamp + (performance.now() - internetClockPerformance));
+    const dateParts = Object.fromEntries(
+        new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'America/Sao_Paulo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).formatToParts(now)
+            .map(({ type, value }) => [type, value])
+    );
+    return new Date(Number(dateParts.year), Number(dateParts.month) - 1, Number(dateParts.day), 12);
+}
+
+function getEmployeesWorkingOnDate(date = getCurrentSaoPauloDate()) {
+    return employees.filter(employee => getEmployeeStatusForDate(employee, date) !== 'FOLGA');
+}
+
+function showWorkingTodayDetails() {
+    const today = getCurrentSaoPauloDate();
+    const workingEmployees = getEmployeesWorkingOnDate(today);
+    const title = document.getElementById('workingTodayTitle');
+    const container = document.getElementById('workingTodayList');
+    if (!title || !container) return;
+
+    title.textContent = `Funcionários trabalhando hoje — ${today.toLocaleDateString('pt-BR')}`;
+    container.replaceChildren();
+
+    if (!workingEmployees.length) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.textContent = 'Nenhum funcionário escalado para trabalhar hoje.';
+        container.appendChild(emptyState);
+    } else {
+        workingEmployees.forEach(employee => {
+            const card = document.createElement('div');
+            card.className = 'employee-card';
+
+            const name = document.createElement('div');
+            name.className = 'employee-name';
+            const personIcon = document.createElement('i');
+            personIcon.className = 'fas fa-user';
+            name.append(personIcon, document.createTextNode(` ${employee.name || 'Nome não informado'}`));
+
+            const details = document.createElement('div');
+            details.className = 'employee-details';
+            [
+                ['fa-building', employee.sector || 'Setor não informado'],
+                ['fa-clock', employee.schedule || 'Horário não informado']
+            ].forEach(([iconName, value]) => {
+                const detail = document.createElement('div');
+                detail.className = 'employee-detail';
+                const icon = document.createElement('i');
+                icon.className = `fas ${iconName}`;
+                detail.append(icon, document.createTextNode(` ${value}`));
+                details.appendChild(detail);
+            });
+
+            card.append(name, details);
+            container.appendChild(card);
+        });
+    }
+
+    showModal('workingTodayModal');
 }
 
 function isEmployeeOffOnSunday(employee, sundayDate) {
@@ -1075,6 +1149,9 @@ function getSectorColor(name) {
 function updateStats() {
     const total = document.getElementById('totalEmployees');
     if (total) total.textContent = employees.length;
+
+    const workingToday = document.getElementById('workingToday');
+    if (workingToday) workingToday.textContent = getEmployeesWorkingOnDate().length;
     
     const activeSectors = document.getElementById('activeSectorsCount');
     if (activeSectors) activeSectors.textContent = sectors.length;
