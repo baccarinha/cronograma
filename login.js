@@ -3,7 +3,7 @@ import { auth } from "./firebase-config.js";
 import {
     signInWithEmailAndPassword,
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 const form = document.getElementById("formLogin");
 const email = document.getElementById("email");
