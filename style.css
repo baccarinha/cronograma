@@ -1189,9 +1189,12 @@ body {
 }
 
 .pdf-page-column .pdf-special-group-title {
-    margin: 0 0 6px;
-    padding-bottom: 4px;
-    border-bottom: 2px solid #6c757d;
+    margin: 10px 0 6px;
+    padding: 4px 6px;
+    border: 1px solid #6c757d;
+    border-left: 4px solid #495057;
+    border-radius: 3px;
+    background: #f3f5f7;
     color: #343a40;
     font-size: 11px;
     line-height: 1.25;
