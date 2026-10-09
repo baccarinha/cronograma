@@ -29,6 +29,10 @@
       return;
     }
 
+    window.authenticatedUserId = user.uid;
+    window.dispatchEvent(new CustomEvent("authenticated-user-ready", {
+      detail: { uid: user.uid }
+    }));
     document.documentElement.style.visibility = "visible";
   });
 
