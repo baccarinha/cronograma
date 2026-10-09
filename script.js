@@ -271,6 +271,21 @@ function openEditEmployeeOffDays(id) {
 
     document.getElementById('editEmployeeId').value = employee.id;
     document.getElementById('editEmployeeName').value = employee.name;
+
+    const sectorSelect = document.getElementById('editEmployeeSector');
+    sectorSelect.replaceChildren();
+    const availableSectors = [...sectors];
+    if (employee.sector && !availableSectors.some(sector => sector.name === employee.sector)) {
+        availableSectors.push({ name: employee.sector });
+    }
+    availableSectors.forEach(sector => {
+        const option = document.createElement('option');
+        option.value = sector.name;
+        option.textContent = sector.name;
+        sectorSelect.appendChild(option);
+    });
+    sectorSelect.value = employee.sector || '';
+
     document.getElementById('editEmployeeSchedule').value = employee.schedule || '';
     // Registros antigos com sábado de folga passam para a opção permitida mais próxima.
     document.getElementById('editEmployeeOffDay').value =
@@ -303,6 +318,7 @@ function updateEmployeeOffDays(event) {
     }
 
     employee.name = name;
+    employee.sector = document.getElementById('editEmployeeSector').value;
     employee.schedule = document.getElementById('editEmployeeSchedule').value;
     employee.offDay = document.getElementById('editEmployeeOffDay').value;
     employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
@@ -310,6 +326,7 @@ function updateEmployeeOffDays(event) {
     saveData();
     renderEmployees();
     renderDashboardEmployees();
+    renderSectors();
     updateStats();
     closeModal('editEmployeeOffDaysModal');
     showNotification('Funcionário atualizado!', 'success');
