@@ -836,28 +836,20 @@ function groupScheduleEmployeesBySector(employeeList) {
 }
 
 function createSchedulePDFPage(capture, schedule) {
-    const scheduleDay = [schedule.dayText, schedule.dateText].filter(Boolean).join(' • ');
+    const scheduleDay = [schedule.dateText, schedule.dayText].filter(Boolean).join(' • ');
     const page = document.createElement('div');
     page.className = 'pdf-page';
 
     const header = document.createElement('div');
     header.className = 'pdf-header';
-    const logo = document.createElement('div');
-    logo.className = 'pdf-logo';
-    const logoIcon = document.createElement('i');
-    logoIcon.className = 'fas fa-store';
-    logo.append(logoIcon, document.createTextNode(' FORT ATACADISTA'));
-    const title = document.createElement('div');
-    title.className = 'pdf-title';
-    title.textContent = 'CRONOGRAMA DE ESCALA';
     const subtitle = document.createElement('div');
     subtitle.className = 'pdf-subtitle';
-    subtitle.textContent = [schedule.name, scheduleDay].filter(Boolean).join(' • ');
-    header.append(logo, title, subtitle);
+    subtitle.textContent = scheduleDay;
+    header.append(subtitle);
 
     const columnsContainer = document.createElement('div');
     columnsContainer.className = 'pdf-page-columns';
-    const columns = [0, 1].map(() => {
+    const columns = [0, 1, 2].map(() => {
         const column = document.createElement('div');
         column.className = 'pdf-page-column';
         columnsContainer.appendChild(column);
@@ -903,8 +895,8 @@ function buildSchedulePDFPages(schedule, capture) {
     let context = { sector: null, workHours: null, subgroup: null };
 
     const advanceColumn = () => {
-        if (currentColumnIndex === 0) {
-            currentColumnIndex = 1;
+        if (currentColumnIndex < currentPage.columns.length - 1) {
+            currentColumnIndex += 1;
         } else {
             currentPage = createSchedulePDFPage(capture, schedule);
             currentColumnIndex = 0;
