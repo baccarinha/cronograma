@@ -120,6 +120,87 @@ function showTab(tabId) {
     event.currentTarget.classList.add('active');
 }
 
+// Calendário público de ciclos: 04/01/2026 é o primeiro domingo A para ambos.
+let selectedSundayGender = null;
+let selectedSundayYear = 2026;
+const SUNDAY_CYCLE_START = new Date(2026, 0, 4, 12);
+
+function showSundayCycleForDate(date, gender = selectedSundayGender) {
+    const sunday = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+    const weeksFromStart = Math.round((sunday - SUNDAY_CYCLE_START) / (7 * 24 * 60 * 60 * 1000));
+    const cycleCount = gender === 'homem' ? 3 : 2;
+    const index = ((weeksFromStart % cycleCount) + cycleCount) % cycleCount;
+    return String.fromCharCode(65 + index);
+}
+
+function openSundayCalendar(gender) {
+    selectedSundayGender = gender === 'homem' ? 'homem' : 'mulher';
+    selectedSundayYear = 2026;
+    document.getElementById('sundayGenderChooser').hidden = true;
+    document.getElementById('sundayCalendarPage').hidden = false;
+    const label = selectedSundayGender === 'homem' ? 'Homem' : 'Mulher';
+    document.getElementById('sundayCalendarHeading').textContent = `Domingos correspondentes — ${label}`;
+    document.getElementById('sundayCycleNote').textContent = selectedSundayGender === 'homem'
+        ? 'Ciclos A, B e C em sequência contínua. O primeiro domingo, 04/01/2026, começa no ciclo A.'
+        : 'Ciclos A e B alternados em sequência contínua. O primeiro domingo, 04/01/2026, começa no ciclo A.';
+    renderSundayCalendar();
+}
+
+function backToSundayGenders() {
+    selectedSundayGender = null;
+    document.getElementById('sundayCalendarPage').hidden = true;
+    document.getElementById('sundayGenderChooser').hidden = false;
+}
+
+function renderSundayCalendar() {
+    const yearPicker = document.getElementById('sundayYearPicker');
+    const monthGrid = document.getElementById('sundayMonthGrid');
+    if (!yearPicker || !monthGrid || !selectedSundayGender) return;
+
+    yearPicker.replaceChildren();
+    for (let year = 2026; year <= 2036; year++) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `sunday-year-button${year === selectedSundayYear ? ' active' : ''}`;
+        button.textContent = String(year);
+        button.setAttribute('aria-pressed', String(year === selectedSundayYear));
+        button.addEventListener('click', () => {
+            selectedSundayYear = year;
+            renderSundayCalendar();
+        });
+        yearPicker.appendChild(button);
+    }
+
+    const monthNames = new Intl.DateTimeFormat('pt-BR', { month: 'long' });
+    monthGrid.replaceChildren();
+    for (let month = 0; month < 12; month++) {
+        const card = document.createElement('section');
+        card.className = 'sunday-month-card';
+        const heading = document.createElement('h4');
+        heading.textContent = monthNames.format(new Date(selectedSundayYear, month, 1)).replace(/^./, c => c.toLocaleUpperCase('pt-BR'));
+        card.appendChild(heading);
+
+        const sundays = [];
+        for (let day = 1; day <= new Date(selectedSundayYear, month + 1, 0).getDate(); day++) {
+            const date = new Date(selectedSundayYear, month, day, 12);
+            if (date.getDay() === 0) sundays.push(date);
+        }
+        sundays.forEach(date => {
+            const row = document.createElement('div');
+            row.className = 'sunday-date-row';
+            const dateLabel = document.createElement('span');
+            dateLabel.textContent = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+            const cycle = showSundayCycleForDate(date);
+            const badge = document.createElement('span');
+            badge.className = `sunday-cycle-badge cycle-${cycle.toLowerCase()}`;
+            badge.textContent = `Domingo ${cycle}`;
+            row.append(dateLabel, badge);
+            card.appendChild(row);
+        });
+        monthGrid.appendChild(card);
+    }
+}
+
 // Funções de Modal
 function showModal(modalId) {
     document.getElementById(modalId).classList.add('show');
