@@ -103,6 +103,10 @@
                 <i class="fas fa-building"></i>
                 Setores
             </button>
+            <button class="nav-tab" onclick="showTab('sundayCycles')">
+                <i class="fas fa-calendar-week" aria-hidden="true"></i>
+                Domingos Correspondentes
+            </button>
         </div>
 
         <!-- Conteúdo das Abas -->
@@ -210,6 +214,36 @@
         <div id="sectors" class="tab-content">
             <div id="sectorsList" class="sector-grid">
                 <!-- Setores serão carregados dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Domingos correspondentes -->
+        <div id="sundayCycles" class="tab-content">
+            <div class="sunday-page-heading">
+                <span class="sunday-eyebrow">CALENDÁRIO DE ESCALAS</span>
+                <h2>Domingos Correspondentes</h2>
+                <p>Consulte o ciclo de cada domingo, mês a mês, de 2026 a 2036.</p>
+            </div>
+            <div id="sundayGenderChooser" class="sunday-gender-chooser">
+                <button class="sunday-gender-card woman" type="button" onclick="openSundayCalendar('mulher')">
+                    <span class="sunday-gender-icon"><i class="fas fa-venus" aria-hidden="true"></i></span>
+                    <span><strong>Mulher</strong><small>2 ciclos: A e B</small></span>
+                    <i class="fas fa-arrow-right sunday-card-arrow" aria-hidden="true"></i>
+                </button>
+                <button class="sunday-gender-card man" type="button" onclick="openSundayCalendar('homem')">
+                    <span class="sunday-gender-icon"><i class="fas fa-mars" aria-hidden="true"></i></span>
+                    <span><strong>Homem</strong><small>3 ciclos: A, B e C</small></span>
+                    <i class="fas fa-arrow-right sunday-card-arrow" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div id="sundayCalendarPage" class="sunday-calendar-page" hidden>
+                <div class="sunday-calendar-toolbar">
+                    <button class="btn btn-secondary" type="button" onclick="backToSundayGenders()"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar</button>
+                    <h3 id="sundayCalendarHeading"></h3>
+                </div>
+                <p class="sunday-cycle-note" id="sundayCycleNote"></p>
+                <div class="sunday-year-picker" id="sundayYearPicker" aria-label="Selecione o ano"></div>
+                <div class="sunday-month-grid" id="sundayMonthGrid" aria-live="polite"></div>
             </div>
         </div>
 
