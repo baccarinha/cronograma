@@ -16,9 +16,14 @@ let pdfPreviewVisible = false;
 let internetClockTimestamp = null;
 let internetClockPerformance = null;
 let internetClockSyncInProgress = false;
+let activeUserId = null;
+let applicationInitialized = false;
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+function initializeApplication(userId) {
+    if (!userId || applicationInitialized) return;
+    activeUserId = userId;
+    applicationInitialized = true;
     loadData();
     updateStats();
     renderEmployees();
@@ -35,7 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStats();
         renderDashboardEmployees();
     }, 60_000);
+}
+
+window.addEventListener('authenticated-user-ready', event => {
+    initializeApplication(event.detail?.uid);
 });
+if (window.authenticatedUserId) initializeApplication(window.authenticatedUserId);
 
 // Relógio sincronizado pela internet (fuso horário de Brasília)
 function startInternetClock() {
@@ -1242,15 +1252,35 @@ function updateStats() {
 }
 
 function saveData() {
-    localStorage.setItem('fortEmployees', JSON.stringify(employees));
-    localStorage.setItem('fortSchedules', JSON.stringify(schedules));
-    localStorage.setItem('fortSectors', JSON.stringify(sectors));
+    if (!activeUserId) return;
+
+    localStorage.setItem(`fortEmployees:${activeUserId}`, JSON.stringify(employees));
+    localStorage.setItem(`fortSchedules:${activeUserId}`, JSON.stringify(schedules));
+    localStorage.setItem(`fortSectors:${activeUserId}`, JSON.stringify(sectors));
 }
 
 function loadData() {
-    const e = localStorage.getItem('fortEmployees');
-    const s = localStorage.getItem('fortSchedules');
-    const sec = localStorage.getItem('fortSectors');
+    const scopedKeys = {
+        employees: `fortEmployees:${activeUserId}`,
+        schedules: `fortSchedules:${activeUserId}`,
+        sectors: `fortSectors:${activeUserId}`
+    };
+    let e = localStorage.getItem(scopedKeys.employees);
+    let s = localStorage.getItem(scopedKeys.schedules);
+    let sec = localStorage.getItem(scopedKeys.sectors);
+
+    // Migração única do armazenamento antigo para a primeira conta que abrir esta versão.
+    const legacyKeys = ['fortEmployees', 'fortSchedules', 'fortSectors'];
+    const hasScopedData = Object.values(scopedKeys).some(key => localStorage.getItem(key) !== null);
+    const hasLegacyData = legacyKeys.some(key => localStorage.getItem(key) !== null);
+    let migratingLegacyData = false;
+    if (!hasScopedData && hasLegacyData) {
+        e = e ?? localStorage.getItem('fortEmployees');
+        s = s ?? localStorage.getItem('fortSchedules');
+        sec = sec ?? localStorage.getItem('fortSectors');
+        migratingLegacyData = true;
+    }
+
     if (e) employees = JSON.parse(e);
     if (s) schedules = JSON.parse(s);
     if (sec) {
@@ -1277,6 +1307,7 @@ function loadData() {
         ? { ...employee, sector: 'Operador de loja' }
         : employee);
     saveData();
+    if (migratingLegacyData) legacyKeys.forEach(key => localStorage.removeItem(key));
 }
 
 // Event Listeners
