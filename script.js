@@ -280,6 +280,7 @@ function openEditEmployeeOffDays(id) {
     document.getElementById('editEmployeeId').value = employee.id;
     document.getElementById('editEmployeeName').value = employee.name;
     populateEmployeeSectorOptions(document.getElementById('editEmployeeSector'), employee.sector || '');
+    document.getElementById('editEmployeeSchedule').value = employee.schedule || '';
     // Registros antigos com sábado de folga passam para a opção permitida mais próxima.
     document.getElementById('editEmployeeOffDay').value =
         ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'nenhum'].includes(employee.offDay)
@@ -306,13 +307,15 @@ function updateEmployeeOffDays(event) {
 
     const name = document.getElementById('editEmployeeName').value.trim();
     const sector = document.getElementById('editEmployeeSector').value;
-    if (!name || !sector) {
-        showNotification('Informe o nome e o cargo/setor do funcionário.', 'error');
+    const schedule = document.getElementById('editEmployeeSchedule').value;
+    if (!name || !sector || !schedule) {
+        showNotification('Informe o nome, o cargo/setor e o horário do funcionário.', 'error');
         return;
     }
 
     employee.name = name;
     employee.sector = sector;
+    employee.schedule = schedule;
     employee.offDay = document.getElementById('editEmployeeOffDay').value;
     employee.sundayCycle = document.getElementById('editEmployeeSundayCycle').value;
 
