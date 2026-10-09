@@ -236,7 +236,7 @@
                     <input type="text" class="form-input" id="employeeName" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Setor</label>
+                    <label class="form-label">Cargo / Setor</label>
                     <select class="form-select" id="employeeSector" required>
                         <option value="">Selecione um setor</option>
                         <option value="Caixa">Caixa</option>
@@ -244,6 +244,7 @@
                         <option value="Carrinhos">Carrinhos</option>
                         <option value="Assistentes">Assistentes</option>
                         <option value="Fiscal">Fiscal</option>
+                        <option value="Operador(a) de loja">Operador(a) de loja</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -293,11 +294,11 @@
         </div>
     </div>
 
-    <!-- Modal Editar Folgas do Funcionário -->
+    <!-- Modal Editar Funcionário -->
     <div id="editEmployeeOffDaysModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Editar Funcionário e Folgas</h2>
+                <h2 class="modal-title">Editar Funcionário</h2>
                 <button class="close-btn" onclick="closeModal('editEmployeeOffDaysModal')">&times;</button>
             </div>
             <form id="editEmployeeOffDaysForm">
@@ -305,6 +306,10 @@
                 <div class="form-group">
                     <label class="form-label" for="editEmployeeName">Nome completo</label>
                     <input type="text" class="form-input" id="editEmployeeName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editEmployeeSector">Cargo / Setor</label>
+                    <select class="form-select" id="editEmployeeSector" required></select>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="editEmployeeOffDay">Dia de Folga na Semana</label>
